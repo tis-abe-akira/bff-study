@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +41,9 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public ResponseEntity<Map<String, String>> loginSuccess() {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Login successful");
-        response.put("redirectUrl", "http://localhost:3000/dashboard");
-        return ResponseEntity.ok(response);
+    public RedirectView loginSuccess() {
+        // 認証成功後、フロントエンドのダッシュボードにリダイレクト
+        return new RedirectView("http://localhost:3000/dashboard");
     }
 
     @GetMapping("/failure")
