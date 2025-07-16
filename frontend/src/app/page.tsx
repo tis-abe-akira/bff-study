@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Zap, Activity, ChevronRight, Github, Twitter, Globe } from 'lucide-react';
+import { Shield, Activity, ChevronRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
@@ -50,23 +50,23 @@ export default function LoginPage() {
         ))}
       </div>
 
-      <div className="w-full max-w-sm mx-auto relative z-10">
-        {/* Compact logo and title section */}
+      <div className="w-full max-w-md mx-auto relative z-10">
+        {/* Logo and title section */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8"
+          className="text-center mb-12"
         >
-          <div className="relative inline-block mb-4">
+          <div className="relative inline-block mb-6">
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="relative"
             >
-              <div className="w-16 h-16 mx-auto rounded-xl bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center cyber-glow mb-3">
-                <Activity className="w-8 h-8 text-white" />
+              <div className="w-20 h-20 mx-auto rounded-xl bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center cyber-glow mb-4">
+                <Activity className="w-10 h-10 text-white" />
               </div>
               <div className="absolute -inset-1 bg-gradient-to-br from-primary/30 via-accent/30 to-secondary/30 rounded-xl blur-lg opacity-75 animate-pulse" />
             </motion.div>
@@ -76,32 +76,31 @@ export default function LoginPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-3xl font-bold text-gradient mb-3"
+            className="text-4xl font-bold text-gradient mb-4"
           >
-CyberFit
+            CyberFit
           </motion.h1>
           
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="text-lg text-gray-300 font-light"
+            className="text-xl text-gray-300 font-light"
           >
             Training Matrix Access Portal
           </motion.p>
         </motion.div>
 
-        {/* Compact login card */}
+        {/* Access Terminal */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-8"
         >
-          <div className="card-cyber p-6 space-y-6 text-center">
-            <div className="space-y-2">
+          <div className="card-cyber p-8 space-y-8 text-center">
+            <div className="space-y-3">
               <h2 className="text-2xl font-bold text-white">Access Terminal</h2>
-              <p className="text-gray-400 text-sm">Initialize secure connection</p>
+              <p className="text-gray-400">Initialize secure connection</p>
             </div>
 
             {/* Login Button */}
@@ -109,7 +108,7 @@ CyberFit
               whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(0, 212, 255, 0.4)" }}
               whileTap={{ scale: 0.98 }}
               onClick={handleLogin}
-              className="w-full btn-cyber group flex items-center justify-center space-x-3 py-4 text-base relative overflow-hidden"
+              className="max-w-xs mx-auto btn-cyber group flex items-center justify-center space-x-3 py-4 px-8 text-base relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <Shield className="w-5 h-5 relative z-10" />
@@ -128,65 +127,6 @@ CyberFit
                 🛡️ KeyCloak OAuth2 • Enterprise encryption
               </div>
             </div>
-          </div>
-        </motion.div>
-
-        {/* Compact features */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="space-y-3 mb-8"
-        >
-          <div className="flex items-center space-x-3 p-3 rounded-lg glass-effect hover:border-primary/20 transition-all duration-300">
-            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-              <Shield className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-white text-sm font-semibold">Quantum Security</h3>
-              <p className="text-gray-400 text-xs">Military-grade protection</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3 p-3 rounded-lg glass-effect hover:border-secondary/20 transition-all duration-300">
-            <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-secondary" />
-            </div>
-            <div>
-              <h3 className="text-white text-sm font-semibold">Neural Analytics</h3>
-              <p className="text-gray-400 text-xs">AI-powered insights</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3 p-3 rounded-lg glass-effect hover:border-accent/20 transition-all duration-300">
-            <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
-              <Activity className="w-4 h-4 text-accent" />
-            </div>
-            <div>
-              <h3 className="text-white text-sm font-semibold">Bio Integration</h3>
-              <p className="text-gray-400 text-xs">Adaptive training matrix</p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Compact status indicators */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.0 }}
-          className="flex justify-center space-x-6"
-        >
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 rounded-full bg-secondary shadow-sm shadow-secondary/50 animate-pulse" />
-            <span className="text-xs text-gray-400 font-medium">BACKEND</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary/50 animate-pulse" />
-            <span className="text-xs text-gray-400 font-medium">AUTH</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 rounded-full bg-accent shadow-sm shadow-accent/50 animate-pulse" />
-            <span className="text-xs text-gray-400 font-medium">DATABASE</span>
           </div>
         </motion.div>
       </div>
