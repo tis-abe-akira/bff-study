@@ -1,0 +1,71 @@
+{
+  "realm": "training",
+  "enabled": true,
+  "displayName": "Training Realm",
+  "clients": [
+    {
+      "clientId": "training-app",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "training-secret",
+      "redirectUris": [
+        "http://localhost:8080/login/oauth2/code/keycloak",
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8080",
+        "http://localhost:3000"
+      ],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "300",
+        "client.session.idle.timeout": "1800",
+        "client.session.max.lifespan": "3600"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "testuser",
+      "enabled": true,
+      "firstName": "Test",
+      "lastName": "User",
+      "email": "test@example.com",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "department": ["Engineering"],
+        "title": ["Software Developer"]
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "User role"
+      },
+      {
+        "name": "admin",
+        "description": "Admin role"
+      }
+    ]
+  },
+  "scopeMappings": [
+    {
+      "client": "training-app",
+      "roles": ["user"]
+    }
+  ],
+  "defaultRoles": ["user"]
+}
