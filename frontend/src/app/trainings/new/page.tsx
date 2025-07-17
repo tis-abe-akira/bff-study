@@ -137,24 +137,28 @@ export default function NewTrainingPage() {
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-dark via-gray-900 to-dark py-12 px-6">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex items-center justify-between mb-8"
+          className="mb-16"
         >
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 mb-8">
             <Link href="/trainings">
-              <button className="w-10 h-10 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors flex items-center justify-center">
-                <ArrowLeft className="w-5 h-5 text-white" />
+              <button className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 flex items-center justify-center group">
+                <ArrowLeft className="w-6 h-6 text-primary group-hover:text-primary/80 transition-colors" />
               </button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gradient mb-2">Create New Training</h1>
-              <p className="text-gray-400">Design your next cyber training protocol</p>
+              <h1 className="text-3xl font-bold text-gradient mb-2">
+                Create New Training
+              </h1>
+              <p className="text-gray-400">
+                Design your next training protocol
+              </p>
             </div>
           </div>
         </motion.div>
@@ -166,12 +170,13 @@ export default function NewTrainingPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="card-cyber p-8"
         >
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-10">
             {/* Title */}
             <div>
-              <label className="flex items-center space-x-2 text-white font-medium mb-2">
+              <label className="flex items-center space-x-2 text-white font-medium mb-3">
                 <Activity className="w-5 h-5 text-primary" />
-                <span>Training Title *</span>
+                <span>Training Title</span>
+                <span className="text-red-400 text-sm">*</span>
               </label>
               <input
                 type="text"
@@ -179,17 +184,17 @@ export default function NewTrainingPage() {
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="Enter training title..."
-                className={`w-full px-4 py-3 bg-dark border rounded-lg text-white placeholder-gray-400 focus:ring-1 focus:ring-primary transition-colors ${
-                  errors.title ? 'border-red-500' : 'border-gray-600 focus:border-primary'
+                className={`w-full px-4 py-4 bg-dark border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 text-lg ${
+                  errors.title ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
-              {errors.title && <p className="mt-1 text-red-400 text-sm">{errors.title}</p>}
+              {errors.title && <p className="mt-2 text-red-400 text-sm">{errors.title}</p>}
             </div>
 
             {/* Description */}
             <div>
-              <label className="flex items-center space-x-2 text-white font-medium mb-2">
-                <FileText className="w-5 h-5 text-primary" />
+              <label className="flex items-center space-x-2 text-white font-medium mb-3">
+                <FileText className="w-5 h-5 text-secondary" />
                 <span>Description</span>
               </label>
               <textarea
@@ -197,24 +202,25 @@ export default function NewTrainingPage() {
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Describe your training protocol..."
-                rows={4}
-                className="w-full px-4 py-3 bg-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none"
+                rows={5}
+                className="w-full px-4 py-4 bg-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all duration-200 resize-none text-lg"
               />
             </div>
 
             {/* Type and Difficulty */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="flex items-center space-x-2 text-white font-medium mb-2">
-                  <Target className="w-5 h-5 text-primary" />
-                  <span>Training Type *</span>
+                <label className="flex items-center space-x-2 text-white font-medium mb-3">
+                  <Target className="w-5 h-5 text-accent" />
+                  <span>Training Type</span>
+                  <span className="text-red-400 text-sm">*</span>
                 </label>
                 <select
                   name="type"
                   value={formData.type}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-dark border rounded-lg text-white focus:ring-1 focus:ring-primary transition-colors ${
-                    errors.type ? 'border-red-500' : 'border-gray-600 focus:border-primary'
+                  className={`w-full px-4 py-4 bg-dark border rounded-lg text-white focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all duration-200 text-lg ${
+                    errors.type ? 'border-red-500' : 'border-gray-600'
                   }`}
                 >
                   <option value="">Select type...</option>
@@ -224,20 +230,21 @@ export default function NewTrainingPage() {
                     </option>
                   ))}
                 </select>
-                {errors.type && <p className="mt-1 text-red-400 text-sm">{errors.type}</p>}
+                {errors.type && <p className="mt-2 text-red-400 text-sm">{errors.type}</p>}
               </div>
 
               <div>
-                <label className="flex items-center space-x-2 text-white font-medium mb-2">
-                  <Target className="w-5 h-5 text-primary" />
-                  <span>Difficulty *</span>
+                <label className="flex items-center space-x-2 text-white font-medium mb-3">
+                  <Target className="w-5 h-5 text-yellow-400" />
+                  <span>Difficulty</span>
+                  <span className="text-red-400 text-sm">*</span>
                 </label>
                 <select
                   name="difficulty"
                   value={formData.difficulty}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-dark border rounded-lg text-white focus:ring-1 focus:ring-primary transition-colors ${
-                    errors.difficulty ? 'border-red-500' : 'border-gray-600 focus:border-primary'
+                  className={`w-full px-4 py-4 bg-dark border rounded-lg text-white focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all duration-200 text-lg ${
+                    errors.difficulty ? 'border-red-500' : 'border-gray-600'
                   }`}
                 >
                   <option value="">Select difficulty...</option>
@@ -247,15 +254,16 @@ export default function NewTrainingPage() {
                     </option>
                   ))}
                 </select>
-                {errors.difficulty && <p className="mt-1 text-red-400 text-sm">{errors.difficulty}</p>}
+                {errors.difficulty && <p className="mt-2 text-red-400 text-sm">{errors.difficulty}</p>}
               </div>
             </div>
 
             {/* Duration */}
             <div>
-              <label className="flex items-center space-x-2 text-white font-medium mb-2">
-                <Clock className="w-5 h-5 text-primary" />
-                <span>Duration (minutes) *</span>
+              <label className="flex items-center space-x-2 text-white font-medium mb-3">
+                <Clock className="w-5 h-5 text-green-400" />
+                <span>Duration (minutes)</span>
+                <span className="text-red-400 text-sm">*</span>
               </label>
               <input
                 type="number"
@@ -264,15 +272,15 @@ export default function NewTrainingPage() {
                 onChange={handleInputChange}
                 placeholder="30"
                 min="1"
-                className={`w-full px-4 py-3 bg-dark border rounded-lg text-white placeholder-gray-400 focus:ring-1 focus:ring-primary transition-colors ${
-                  errors.durationMinutes ? 'border-red-500' : 'border-gray-600 focus:border-primary'
+                className={`w-full px-4 py-4 bg-dark border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-200 text-lg ${
+                  errors.durationMinutes ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
-              {errors.durationMinutes && <p className="mt-1 text-red-400 text-sm">{errors.durationMinutes}</p>}
+              {errors.durationMinutes && <p className="mt-2 text-red-400 text-sm">{errors.durationMinutes}</p>}
             </div>
 
             {/* Submit Buttons */}
-            <div className="flex items-center justify-end space-x-4 pt-6">
+            <div className="flex items-center justify-end space-x-4 pt-8">
               <Link href="/trainings">
                 <button
                   type="button"
