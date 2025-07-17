@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, TrendingUp, Calendar, Shield, LogOut } from 'lucide-react';
+import { Activity, TrendingUp, Calendar, Shield, LogOut, Target, BarChart3 } from 'lucide-react';
+import Link from 'next/link';
 
 interface User {
   id?: string;
@@ -203,10 +204,22 @@ export default function Dashboard() {
             {/* Quick Actions */}
             <div className="card-cyber p-12 mx-4">
               <h3 className="text-xl font-bold text-white mb-8">Quick Actions</h3>
-              <div className="flex justify-center">
-                <button className="btn-cyber py-6 px-12 text-base flex items-center justify-center">
-                  <Activity className="w-5 h-5 mr-3" />
-                  Start New Session
+              <div className="space-y-4">
+                <Link href="/trainings/new">
+                  <button className="w-full btn-cyber py-4 text-base flex items-center justify-center">
+                    <Activity className="w-5 h-5 mr-3" />
+                    Create New Training
+                  </button>
+                </Link>
+                <Link href="/trainings">
+                  <button className="w-full p-4 rounded-lg glass-effect hover:border-primary/30 transition-all duration-300 text-white text-base flex items-center justify-center">
+                    <Target className="w-5 h-5 mr-3" />
+                    View All Trainings
+                  </button>
+                </Link>
+                <button className="w-full p-4 rounded-lg glass-effect hover:border-secondary/30 transition-all duration-300 text-white text-base flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 mr-3" />
+                  Analytics Report
                 </button>
               </div>
             </div>
