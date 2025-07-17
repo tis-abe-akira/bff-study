@@ -92,8 +92,8 @@ public class AuthController {
                     OidcUser oidcUser = (OidcUser) principal;
                     String idToken = oidcUser.getIdToken().getTokenValue();
                     
-                    // KeyCloak 23.x対応のログアウトURL構築
-                    keycloakLogoutUrl = "http://localhost:8180/realms/training/protocol/openid-connect/logout" +
+                    // KeyCloak 26.x対応のログアウトURL構築
+                    keycloakLogoutUrl = "http://localhost:8180/realms/training-app/protocol/openid-connect/logout" +
                         "?id_token_hint=" + idToken +
                         "&post_logout_redirect_uri=" + java.net.URLEncoder.encode("http://localhost:3000?logout=success", "UTF-8");
                 } else {
@@ -105,7 +105,7 @@ public class AuthController {
                     
                     if (authorizedClient != null) {
                         // KeyCloakログアウトURL（ID Token なし）
-                        keycloakLogoutUrl = "http://localhost:8180/realms/training/protocol/openid-connect/logout" +
+                        keycloakLogoutUrl = "http://localhost:8180/realms/training-app/protocol/openid-connect/logout" +
                             "?post_logout_redirect_uri=" + java.net.URLEncoder.encode("http://localhost:3000?logout=success", "UTF-8");
                     }
                 }

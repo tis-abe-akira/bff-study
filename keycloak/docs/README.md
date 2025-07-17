@@ -22,12 +22,12 @@
 
   1. 左上の "Master" ドロップダウンをクリック
   2. "Create Realm" をクリック
-  3. Realm name: training と入力
+  3. Realm name: "training-app" と入力
   4. "Create" ボタンをクリック
 
   2-2. 基本設定確認
 
-  - Display name: Training Realm (任意)
+  - Display name: Training-app Realm (任意)
   - Enabled: ON (デフォルト)
   - "Save" をクリック
 
@@ -59,8 +59,8 @@
     - http://localhost:8080/login/oauth2/code/keycloak
     - http://localhost:3000/*
   4. Valid post logout redirect URIs:
-    - http://localhost:3000/*
     - http://localhost:3000
+    - http://localhost:3000/*
   5. Web origins:
     - http://localhost:8080
     - http://localhost:3000
@@ -102,7 +102,7 @@
   7. "Save" をクリック
 
   ---
-  ステップ6: ログアウト機能の設定
+  ステップ6: ログアウト機能の設定 (＊やや手やっていれば不要なはずです)
 
   完全なログアウト（BFF + KeyCloak SSO）を実現するため、以下の設定が必要です：
 
