@@ -109,10 +109,12 @@
   6-1. Valid Post Logout Redirect URIsの設定
 
   1. training-app クライアントの設定画面で "Settings" タブを確認
-  2. "Valid post logout redirect URIs" に以下が含まれていることを確認：
-    - http://localhost:3000/*
-    - http://localhost:3000
-  3. 設定されていない場合は追加して "Save" をクリック
+  2. "Valid post logout redirect URIs" に以下の順番で設定されていることを確認：
+    - http://localhost:3000 (具体的URLを最優先)
+    - http://localhost:3000/* (ワイルドカードを次に)
+  3. 設定されていない場合は追加、順番が間違っている場合は並び替えて "Save" をクリック
+  
+  重要: 順番はKeyCloakのマッチング動作に影響します。具体的URLを必ず上位に配置してください。
 
   6-2. ログアウトフローのテスト
 

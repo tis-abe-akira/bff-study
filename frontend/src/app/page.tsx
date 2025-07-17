@@ -6,9 +6,20 @@ import { Shield, Activity, ChevronRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Check if user was redirected after logout
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === 'success') {
+      setShowLogoutMessage(true);
+      // Remove the logout parameter from URL
+      window.history.replaceState({}, '', '/');
+      // Hide message after 3 seconds
+      setTimeout(() => setShowLogoutMessage(false), 3000);
+    }
   }, []);
 
   const handleLogin = () => {

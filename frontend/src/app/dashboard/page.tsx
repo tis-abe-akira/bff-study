@@ -32,9 +32,27 @@ export default function Dashboard() {
       .catch(err => console.error('Failed to get user info:', err));
   }, []);
 
-  const handleSignOut = () => {
-    // BFFのログアウトエンドポイントに移動
-    window.location.href = 'http://localhost:8080/api/auth/logout';
+  const handleSignOut = async () => {
+    try {
+      // 1. ローカルストレージとセッションストレージをクリア
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // 2. 手動でCookieを削除
+      document.cookie.split(";").forEach(function(c) {
+        const eqPos = c.indexOf("=");
+        const name = eqPos > -1 ? c.substr(0, eqPos) : c;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+      });
+      
+      // 3. BFFのログアウトエンドポイントに移動
+      window.location.href = 'http://localhost:8080/api/auth/logout';
+    } catch (error) {
+      console.error('Logout error:', error);
+      // エラーでも強制的にログアウト
+      window.location.href = 'http://localhost:8080/api/auth/logout';
+    }
   };
 
   if (!mounted) {

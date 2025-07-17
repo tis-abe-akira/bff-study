@@ -76,14 +76,25 @@ public class AuthController {
         // 2. 認証をクリア
         SecurityContextHolder.clearContext();
         
-        // 3. Cookieを削除
-        Cookie cookie = new Cookie("JSESSIONID", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        // 3. 全てのCookieを削除
+        Cookie jsessionCookie = new Cookie("JSESSIONID", null);
+        jsessionCookie.setMaxAge(0);
+        jsessionCookie.setPath("/");
+        response.addCookie(jsessionCookie);
         
-        // 4. 単純にフロントエンドにリダイレクト（KeyCloakスキップ）
-        response.sendRedirect("http://localhost:3000");
+        // OAuth2関連のCookieも削除
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                Cookie deleteCookie = new Cookie(cookie.getName(), null);
+                deleteCookie.setMaxAge(0);
+                deleteCookie.setPath("/");
+                response.addCookie(deleteCookie);
+            }
+        }
+        
+        // 4. シンプルにフロントエンドにリダイレクト
+        response.sendRedirect("http://localhost:3000?logout=success");
     }
 
     @GetMapping("/logout-success")
