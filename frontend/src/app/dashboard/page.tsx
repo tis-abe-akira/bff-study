@@ -33,8 +33,8 @@ export default function Dashboard() {
   }, []);
 
   const handleSignOut = () => {
-    // Redirect to BFF logout endpoint
-    window.location.href = 'http://localhost:8080/logout';
+    // BFFのログアウトエンドポイントに移動
+    window.location.href = 'http://localhost:8080/api/auth/logout';
   };
 
   if (!mounted) {

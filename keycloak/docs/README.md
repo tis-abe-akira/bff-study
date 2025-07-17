@@ -58,10 +58,13 @@
   3. Valid redirect URIs:
     - http://localhost:8080/login/oauth2/code/keycloak
     - http://localhost:3000/*
-  4. Web origins:
+  4. Valid post logout redirect URIs:
+    - http://localhost:3000/*
+    - http://localhost:3000
+  5. Web origins:
     - http://localhost:8080
     - http://localhost:3000
-  5. "Save" をクリック
+  6. "Save" をクリック
 
   ---
   ステップ4: クライアントシークレットの確認
@@ -99,4 +102,26 @@
   7. "Save" をクリック
 
   ---
-  ステップ6: BFFアプリケーションの起動テスト
+  ステップ6: ログアウト機能の設定
+
+  完全なログアウト（BFF + KeyCloak SSO）を実現するため、以下の設定が必要です：
+
+  6-1. Valid Post Logout Redirect URIsの設定
+
+  1. training-app クライアントの設定画面で "Settings" タブを確認
+  2. "Valid post logout redirect URIs" に以下が含まれていることを確認：
+    - http://localhost:3000/*
+    - http://localhost:3000
+  3. 設定されていない場合は追加して "Save" をクリック
+
+  6-2. ログアウトフローのテスト
+
+  1. ダッシュボードで "Sign Out" ボタンをクリック
+  2. KeyCloakのログアウトページが表示される
+  3. 自動的にフロントエンド (http://localhost:3000) にリダイレクト
+  4. 再度 "Authenticate" ボタンを押すとKeyCloakログイン画面が表示される
+
+  注意: Valid Post Logout Redirect URIsが設定されていないと "Invalid parameter: redirect_uri" エラーが発生します。
+
+  ---
+  ステップ7: BFFアプリケーションの起動テスト

@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .loginPage("/api/auth/login")
                 .defaultSuccessUrl("/api/auth/success", true)
                 .failureUrl("/api/auth/failure")
-            );
+            )
+            .logout(logout -> logout.disable());
             
         return http.build();
     }

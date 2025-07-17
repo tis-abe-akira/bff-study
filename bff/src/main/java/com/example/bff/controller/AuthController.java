@@ -2,10 +2,15 @@ package com.example.bff.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +63,27 @@ public class AuthController {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Logout successful");
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/logout")
+    public void logoutGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 1. Spring Security セッションを無効化
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        
+        // 2. 認証をクリア
+        SecurityContextHolder.clearContext();
+        
+        // 3. Cookieを削除
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        
+        // 4. 単純にフロントエンドにリダイレクト（KeyCloakスキップ）
+        response.sendRedirect("http://localhost:3000");
     }
 
     @GetMapping("/logout-success")
