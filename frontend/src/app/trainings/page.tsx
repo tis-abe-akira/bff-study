@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Search, Filter, Activity, Clock, Target, Trash2, Edit3, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface Training {
@@ -112,202 +110,517 @@ export default function TrainingsPage() {
     }
   };
 
-  const getTypeColor = (type: string) => {
+  const getTypeEmoji = (type: string) => {
     switch (type) {
-      case 'strength': return 'text-primary bg-primary/20';
-      case 'cardio': return 'text-secondary bg-secondary/20';
-      case 'flexibility': return 'text-accent bg-accent/20';
-      case 'core': return 'text-yellow-400 bg-yellow-400/20';
-      default: return 'text-gray-400 bg-gray-400/20';
+      case 'strength': return '💪';
+      case 'cardio': return '🏃';
+      case 'flexibility': return '🧘';
+      case 'core': return '⚡';
+      default: return '🏋️';
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return 'text-green-400 bg-green-400/20';
-      case 'intermediate': return 'text-yellow-400 bg-yellow-400/20';
-      case 'advanced': return 'text-red-400 bg-red-400/20';
-      default: return 'text-gray-400 bg-gray-400/20';
-    }
+  const getDifficultyText = (difficulty: string, type: string) => {
+    const typeText = type === 'strength' ? 'High intensity' : 
+                    type === 'cardio' ? 'Easy pace' : 
+                    type === 'flexibility' ? 'Gentle stretch' : 
+                    'Medium intensity';
+    return typeText;
   };
 
   if (!mounted) {
-    return <div className="min-h-screen bg-dark" />;
+    return <div style={{ minHeight: "100vh", background: "#1a1a1a" }} />;
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center justify-between mb-8"
-        >
-          <div>
-            <h1 className="text-3xl font-bold text-gradient mb-2">Training Sessions</h1>
-            <p className="text-gray-400">Manage your cyber training protocols</p>
-          </div>
-          <Link href="/trainings/new">
-            <button className="btn-cyber flex items-center space-x-2">
-              <Plus className="w-5 h-5" />
-              <span>New Training</span>
-            </button>
-          </Link>
-        </motion.div>
+    <div style={{
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+      background: "#1a1a1a",
+      minHeight: "100vh",
+      color: "#ffffff"
+    }}>
+      {/* Header */}
+      <div style={{
+        background: "#2d2d2d",
+        padding: "24px 32px",
+        borderBottom: "1px solid #4a4a4a",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}>
+        <div>
+          <h1 style={{
+            fontSize: "28px",
+            fontWeight: 600,
+            color: "#ffffff",
+            marginBottom: "4px"
+          }}>
+            Training Sessions
+          </h1>
+          <p style={{
+            fontSize: "14px",
+            color: "#b0b0b0"
+          }}>
+            Manage your cyber training protocols
+          </p>
+        </div>
+        <Link href="/trainings/new">
+          <button style={{
+            padding: "12px 24px",
+            background: "#007acc",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            fontSize: "14px",
+            fontWeight: 500,
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px"
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = "#0066aa";
+            e.target.style.transform = "translateY(-1px)";
+            e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = "#007acc";
+            e.target.style.transform = "translateY(0)";
+            e.target.style.boxShadow = "none";
+          }}
+          >
+            <span>+</span>
+            <span>New Training</span>
+          </button>
+        </Link>
+      </div>
 
-        {/* Search and Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="card-cyber p-6 mb-8"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+      {/* Container */}
+      <div style={{
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "32px"
+      }}>
+        {/* Filters Section */}
+        <div style={{
+          background: "#2d2d2d",
+          borderRadius: "8px",
+          border: "1px solid #4a4a4a",
+          padding: "32px",
+          marginBottom: "32px"
+        }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr 1fr",
+            gap: "24px",
+            marginBottom: "24px"
+          }}>
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px"
+            }}>
+              <label style={{
+                fontSize: "14px",
+                color: "#b0b0b0",
+                fontWeight: 500
+              }}>
+                Search trainings
+              </label>
               <input
                 type="text"
                 placeholder="Search trainings..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-full pl-10 pr-4 py-2 bg-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:ring-1 focus:ring-primary"
+                style={{
+                  padding: "12px 16px",
+                  border: "1px solid #555555",
+                  borderRadius: "6px",
+                  background: "#3a3a3a",
+                  color: "#ffffff",
+                  fontSize: "14px",
+                  transition: "all 0.3s ease"
+                }}
+                onFocus={(e) => {
+                  e.target.style.outline = "none";
+                  e.target.style.borderColor = "#007acc";
+                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#555555";
+                  e.target.style.boxShadow = "none";
+                }}
               />
             </div>
-            
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="px-4 py-2 bg-dark border border-gray-600 rounded-lg text-white focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">All Types</option>
-              {types.map((type) => (
-                <option key={type} value={type} className="capitalize">
-                  {type}
-                </option>
-              ))}
-            </select>
 
-            <select
-              value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="px-4 py-2 bg-dark border border-gray-600 rounded-lg text-white focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">All Difficulties</option>
-              {difficulties.map((difficulty) => (
-                <option key={difficulty} value={difficulty} className="capitalize">
-                  {difficulty}
-                </option>
-              ))}
-            </select>
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px"
+            }}>
+              <label style={{
+                fontSize: "14px",
+                color: "#b0b0b0",
+                fontWeight: 500
+              }}>
+                Type
+              </label>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                style={{
+                  padding: "12px 16px",
+                  border: "1px solid #555555",
+                  borderRadius: "6px",
+                  background: "#3a3a3a",
+                  color: "#ffffff",
+                  fontSize: "14px",
+                  transition: "all 0.3s ease",
+                  backgroundImage: "url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 4 5\"><path fill=\"%23888888\" d=\"M2 0L0 2h4zm0 5L0 3h4z\"/></svg>')",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 12px center",
+                  backgroundSize: "12px",
+                  appearance: "none" as const
+                }}
+                onFocus={(e) => {
+                  e.target.style.outline = "none";
+                  e.target.style.borderColor = "#007acc";
+                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#555555";
+                  e.target.style.boxShadow = "none";
+                }}
+              >
+                <option value="" style={{ background: "#3a3a3a", color: "#ffffff" }}>All Types</option>
+                {types.map((type) => (
+                  <option key={type} value={type} style={{ background: "#3a3a3a", color: "#ffffff" }}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            <button
-              onClick={handleSearch}
-              className="btn-cyber flex items-center justify-center space-x-2"
-            >
-              <Filter className="w-4 h-4" />
-              <span>Apply Filters</span>
-            </button>
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px"
+            }}>
+              <label style={{
+                fontSize: "14px",
+                color: "#b0b0b0",
+                fontWeight: 500
+              }}>
+                Difficulty
+              </label>
+              <select
+                value={selectedDifficulty}
+                onChange={(e) => setSelectedDifficulty(e.target.value)}
+                style={{
+                  padding: "12px 16px",
+                  border: "1px solid #555555",
+                  borderRadius: "6px",
+                  background: "#3a3a3a",
+                  color: "#ffffff",
+                  fontSize: "14px",
+                  transition: "all 0.3s ease",
+                  backgroundImage: "url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 4 5\"><path fill=\"%23888888\" d=\"M2 0L0 2h4zm0 5L0 3h4z\"/></svg>')",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 12px center",
+                  backgroundSize: "12px",
+                  appearance: "none" as const
+                }}
+                onFocus={(e) => {
+                  e.target.style.outline = "none";
+                  e.target.style.borderColor = "#007acc";
+                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#555555";
+                  e.target.style.boxShadow = "none";
+                }}
+              >
+                <option value="" style={{ background: "#3a3a3a", color: "#ffffff" }}>All Difficulties</option>
+                {difficulties.map((difficulty) => (
+                  <option key={difficulty} value={difficulty} style={{ background: "#3a3a3a", color: "#ffffff" }}>
+                    {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </motion.div>
 
-        {/* Trainings Grid */}
+          <button
+            onClick={handleSearch}
+            style={{
+              padding: "12px 32px",
+              background: "#007acc",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "14px",
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              alignSelf: "end",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "#0066aa";
+              e.target.style.transform = "translateY(-1px)";
+              e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "#007acc";
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "none";
+            }}
+          >
+            <span>🔍</span>
+            <span>Apply Filters</span>
+          </button>
+        </div>
+
+        {/* Sessions List */}
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "64px 0"
+          }}>
+            <div style={{
+              width: "40px",
+              height: "40px",
+              border: "3px solid #4a4a4a",
+              borderTop: "3px solid #007acc",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite"
+            }} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trainings.map((training, index) => (
-              <motion.div
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px"
+          }}>
+            {trainings.map((training) => (
+              <div
                 key={training.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                className="card-cyber p-6 hover:border-primary/40 transition-all duration-300 group"
+                style={{
+                  background: "#2d2d2d",
+                  borderRadius: "8px",
+                  border: "1px solid #4a4a4a",
+                  padding: "24px",
+                  transition: "all 0.2s ease",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = "#007acc";
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = "#4a4a4a";
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "none";
+                }}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                      <Activity className="w-6 h-6 text-primary" />
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: "16px"
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      fontSize: "18px",
+                      fontWeight: 600,
+                      color: "#ffffff",
+                      marginBottom: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px"
+                    }}>
+                      <span style={{
+                        width: "20px",
+                        height: "20px",
+                        color: "#007acc",
+                        fontSize: "16px"
+                      }}>
+                        ⚡
+                      </span>
+                      {training.title}
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">
-                        {training.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm line-clamp-2">
-                        {training.description}
-                      </p>
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "16px",
+                      fontSize: "14px",
+                      color: "#888888"
+                    }}>
+                      <span style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px"
+                      }}>
+                        {getTypeEmoji(training.type)} {getDifficultyText(training.difficulty, training.type)}
+                      </span>
+                      <span style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px"
+                      }}>
+                        💪 {training.type}, {training.difficulty}
+                      </span>
+                      <span style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px"
+                      }}>
+                        ⏱️ {training.durationMinutes} min
+                      </span>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex items-center space-x-2 mb-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(training.type)}`}>
-                    {training.type}
-                  </span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(training.difficulty)}`}>
-                    {training.difficulty}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
-                  <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{training.durationMinutes} min</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Target className="w-4 h-4" />
-                    <span>{new Date(training.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Link href={`/trainings/${training.id}`}>
-                    <button className="text-primary hover:text-primary/80 font-medium text-sm flex items-center space-x-1">
-                      <span>View Details</span>
-                      <ChevronRight className="w-4 h-4" />
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px"
+                  }}>
+                    <div style={{
+                      fontSize: "12px",
+                      color: "#b0b0b0",
+                      textAlign: "right" as const
+                    }}>
+                      {new Date(training.createdAt).toLocaleDateString('en-US', {
+                        month: '2-digit',
+                        day: '2-digit',
+                        year: 'numeric'
+                      })}
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Edit functionality
+                      }}
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        background: "#4a4a4a",
+                        border: "1px solid #555555",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = "#555555";
+                        e.target.style.transform = "translateY(-1px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = "#4a4a4a";
+                        e.target.style.transform = "translateY(0)";
+                      }}
+                    >
+                      <span style={{ color: "#e0e0e0", fontSize: "14px" }}>✏️</span>
                     </button>
-                  </Link>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Link href={`/trainings/edit/${training.id}`}>
-                      <button className="w-8 h-8 rounded-lg bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-all duration-200 flex items-center justify-center">
-                        <Edit3 className="w-4 h-4" />
+                    <Link href={`/trainings/${training.id}`}>
+                      <button style={{
+                        padding: "8px 16px",
+                        background: "#4a4a4a",
+                        color: "#e0e0e0",
+                        border: "1px solid #555555",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        transition: "all 0.2s ease",
+                        textDecoration: "none"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = "#555555";
+                        e.target.style.transform = "translateY(-1px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = "#4a4a4a";
+                        e.target.style.transform = "translateY(0)";
+                      }}
+                      >
+                        View Details
                       </button>
                     </Link>
-                    <button
-                      onClick={() => handleDelete(training.id)}
-                      className="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all duration-200 flex items-center justify-center"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}
 
+        {/* No Sessions */}
         {trainings.length === 0 && !loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-12"
-          >
-            <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No trainings found</h3>
-            <p className="text-gray-400 mb-6">Create your first training session to get started</p>
+          <div style={{
+            textAlign: "center" as const,
+            padding: "64px 32px",
+            background: "#2d2d2d",
+            borderRadius: "8px",
+            border: "1px solid #4a4a4a"
+          }}>
+            <h3 style={{
+              fontSize: "18px",
+              color: "#ffffff",
+              marginBottom: "8px"
+            }}>
+              No trainings found
+            </h3>
+            <p style={{
+              fontSize: "14px",
+              color: "#888888",
+              marginBottom: "24px"
+            }}>
+              Create your first training session to get started
+            </p>
             <Link href="/trainings/new">
-              <button className="btn-cyber">
+              <button style={{
+                padding: "12px 24px",
+                background: "#007acc",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: 500,
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = "#0066aa";
+                e.target.style.transform = "translateY(-1px)";
+                e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = "#007acc";
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "none";
+              }}
+              >
                 Create Training
               </button>
             </Link>
-          </motion.div>
+          </div>
         )}
       </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

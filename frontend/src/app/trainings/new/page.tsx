@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Save, ArrowLeft, Activity, Clock, Target, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -133,50 +131,105 @@ export default function NewTrainingPage() {
   };
 
   if (!mounted) {
-    return <div className="min-h-screen bg-dark" />;
+    return <div style={{ minHeight: "100vh", background: "#1a1a1a" }} />;
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-gray-900 to-dark py-12 px-6">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <div className="flex items-center space-x-4 mb-8">
-            <Link href="/trainings">
-              <button className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 flex items-center justify-center group">
-                <ArrowLeft className="w-6 h-6 text-primary group-hover:text-primary/80 transition-colors" />
-              </button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-gradient mb-2">
-                Create New Training
-              </h1>
-              <p className="text-gray-400">
-                Design your next training protocol
-              </p>
-            </div>
-          </div>
-        </motion.div>
+  const inputStyle = {
+    width: "100%",
+    padding: "16px 20px",
+    border: "1px solid #555555",
+    borderRadius: "6px",
+    fontSize: "16px",
+    transition: "all 0.3s ease",
+    background: "#3a3a3a",
+    color: "#ffffff",
+    fontFamily: "inherit"
+  };
 
+  const selectStyle = {
+    width: "100%",
+    padding: "16px 20px",
+    border: "1px solid #555555",
+    borderRadius: "6px",
+    fontSize: "16px",
+    transition: "all 0.3s ease",
+    backgroundColor: "#3a3a3a",
+    color: "#ffffff",
+    fontFamily: "inherit",
+    cursor: "pointer",
+    backgroundImage: "url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 4 5\"><path fill=\"%23888888\" d=\"M2 0L0 2h4zm0 5L0 3h4z\"/></svg>')",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 16px center",
+    backgroundSize: "12px",
+    appearance: "none" as const
+  };
+
+  return (
+    <div style={{
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+      background: "#1a1a1a",
+      minHeight: "100vh",
+      color: "#ffffff"
+    }}>
+      <div style={{
+        background: "#2d2d2d",
+        maxWidth: "600px",
+        margin: "20px auto",
+        borderRadius: "8px",
+        overflow: "hidden",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+      }}>
+        {/* Header */}
+        <div style={{
+          background: "#3a3a3a",
+          padding: "32px 40px",
+          borderBottom: "1px solid #4a4a4a",
+          position: "relative" as const
+        }}>
+          <Link href="/trainings">
+            <button style={{
+              position: "absolute" as const,
+              left: "16px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              fontSize: "20px",
+              color: "#b0b0b0",
+              cursor: "pointer",
+              background: "none",
+              border: "none"
+            }}>
+              ←
+            </button>
+          </Link>
+          <h1 style={{
+            fontSize: "24px",
+            fontWeight: 600,
+            marginBottom: "8px",
+            color: "#ffffff"
+          }}>
+            Create New Training
+          </h1>
+          <p style={{
+            fontSize: "14px",
+            color: "#b0b0b0"
+          }}>
+            Design your next training protocol
+          </p>
+        </div>
+        
         {/* Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="card-cyber p-8"
-        >
-          <form onSubmit={handleSubmit} className="space-y-10">
+        <div style={{ padding: "40px" }}>
+          <form onSubmit={handleSubmit}>
             {/* Title */}
-            <div>
-              <label className="flex items-center space-x-2 text-white font-medium mb-3">
-                <Activity className="w-5 h-5 text-primary" />
-                <span>Training Title</span>
-                <span className="text-red-400 text-sm">*</span>
+            <div style={{ marginBottom: "32px" }}>
+              <label style={{
+                display: "block",
+                marginBottom: "8px",
+                fontWeight: 500,
+                color: "#e0e0e0",
+                fontSize: "14px"
+              }}>
+                Training Title <span style={{ color: "#ff6b6b" }}>*</span>
               </label>
               <input
                 type="text"
@@ -184,18 +237,37 @@ export default function NewTrainingPage() {
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="Enter training title..."
-                className={`w-full px-4 py-4 bg-dark border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 text-lg ${
-                  errors.title ? 'border-red-500' : 'border-gray-600'
-                }`}
+                style={{
+                  ...inputStyle,
+                  borderColor: errors.title ? "#ff6b6b" : "#555555"
+                }}
+                onFocus={(e) => {
+                  e.target.style.outline = "none";
+                  e.target.style.borderColor = "#007acc";
+                  e.target.style.backgroundColor = "#404040";
+                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                }}
+                onBlur={(e) => {
+                  if (!errors.title) {
+                    e.target.style.borderColor = "#555555";
+                    e.target.style.backgroundColor = "#3a3a3a";
+                    e.target.style.boxShadow = "none";
+                  }
+                }}
               />
-              {errors.title && <p className="mt-2 text-red-400 text-sm">{errors.title}</p>}
+              {errors.title && <p style={{ marginTop: "6px", fontSize: "12px", color: "#ff6b6b" }}>{errors.title}</p>}
             </div>
 
             {/* Description */}
-            <div>
-              <label className="flex items-center space-x-2 text-white font-medium mb-3">
-                <FileText className="w-5 h-5 text-secondary" />
-                <span>Description</span>
+            <div style={{ marginBottom: "32px" }}>
+              <label style={{
+                display: "block",
+                marginBottom: "8px",
+                fontWeight: 500,
+                color: "#e0e0e0",
+                fontSize: "14px"
+              }}>
+                Description
               </label>
               <textarea
                 name="description"
@@ -203,88 +275,190 @@ export default function NewTrainingPage() {
                 onChange={handleInputChange}
                 placeholder="Describe your training protocol..."
                 rows={5}
-                className="w-full px-4 py-4 bg-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all duration-200 resize-none text-lg"
+                style={{
+                  ...inputStyle,
+                  minHeight: "120px",
+                  resize: "vertical" as const,
+                  lineHeight: 1.6
+                }}
+                onFocus={(e) => {
+                  e.target.style.outline = "none";
+                  e.target.style.borderColor = "#007acc";
+                  e.target.style.backgroundColor = "#404040";
+                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#555555";
+                  e.target.style.backgroundColor = "#3a3a3a";
+                  e.target.style.boxShadow = "none";
+                }}
               />
             </div>
 
             {/* Type and Difficulty */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "24px",
+              marginBottom: "32px"
+            }}>
               <div>
-                <label className="flex items-center space-x-2 text-white font-medium mb-3">
-                  <Target className="w-5 h-5 text-accent" />
-                  <span>Training Type</span>
-                  <span className="text-red-400 text-sm">*</span>
+                <label style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: 500,
+                  color: "#e0e0e0",
+                  fontSize: "14px"
+                }}>
+                  Training Type <span style={{ color: "#ff6b6b" }}>*</span>
                 </label>
                 <select
                   name="type"
                   value={formData.type}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-4 bg-dark border rounded-lg text-white focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all duration-200 text-lg ${
-                    errors.type ? 'border-red-500' : 'border-gray-600'
-                  }`}
+                  style={{
+                    ...selectStyle,
+                    borderColor: errors.type ? "#ff6b6b" : "#555555"
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.outline = "none";
+                    e.target.style.borderColor = "#007acc";
+                    e.target.style.backgroundColor = "#404040";
+                    e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                  }}
+                  onBlur={(e) => {
+                    if (!errors.type) {
+                      e.target.style.borderColor = "#555555";
+                      e.target.style.backgroundColor = "#3a3a3a";
+                      e.target.style.boxShadow = "none";
+                    }
+                  }}
                 >
-                  <option value="">Select type...</option>
+                  <option value="" style={{ background: "#3a3a3a", color: "#ffffff" }}>Select type...</option>
                   {types.map((type) => (
-                    <option key={type} value={type} className="capitalize">
+                    <option key={type} value={type} style={{ background: "#3a3a3a", color: "#ffffff" }}>
                       {type}
                     </option>
                   ))}
                 </select>
-                {errors.type && <p className="mt-2 text-red-400 text-sm">{errors.type}</p>}
+                {errors.type && <p style={{ marginTop: "6px", fontSize: "12px", color: "#ff6b6b" }}>{errors.type}</p>}
               </div>
 
               <div>
-                <label className="flex items-center space-x-2 text-white font-medium mb-3">
-                  <Target className="w-5 h-5 text-yellow-400" />
-                  <span>Difficulty</span>
-                  <span className="text-red-400 text-sm">*</span>
+                <label style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: 500,
+                  color: "#e0e0e0",
+                  fontSize: "14px"
+                }}>
+                  Difficulty <span style={{ color: "#ff6b6b" }}>*</span>
                 </label>
                 <select
                   name="difficulty"
                   value={formData.difficulty}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-4 bg-dark border rounded-lg text-white focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all duration-200 text-lg ${
-                    errors.difficulty ? 'border-red-500' : 'border-gray-600'
-                  }`}
+                  style={{
+                    ...selectStyle,
+                    borderColor: errors.difficulty ? "#ff6b6b" : "#555555"
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.outline = "none";
+                    e.target.style.borderColor = "#007acc";
+                    e.target.style.backgroundColor = "#404040";
+                    e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                  }}
+                  onBlur={(e) => {
+                    if (!errors.difficulty) {
+                      e.target.style.borderColor = "#555555";
+                      e.target.style.backgroundColor = "#3a3a3a";
+                      e.target.style.boxShadow = "none";
+                    }
+                  }}
                 >
-                  <option value="">Select difficulty...</option>
+                  <option value="" style={{ background: "#3a3a3a", color: "#ffffff" }}>Select difficulty...</option>
                   {difficulties.map((difficulty) => (
-                    <option key={difficulty} value={difficulty} className="capitalize">
+                    <option key={difficulty} value={difficulty} style={{ background: "#3a3a3a", color: "#ffffff" }}>
                       {difficulty}
                     </option>
                   ))}
                 </select>
-                {errors.difficulty && <p className="mt-2 text-red-400 text-sm">{errors.difficulty}</p>}
+                {errors.difficulty && <p style={{ marginTop: "6px", fontSize: "12px", color: "#ff6b6b" }}>{errors.difficulty}</p>}
               </div>
             </div>
 
             {/* Duration */}
-            <div>
-              <label className="flex items-center space-x-2 text-white font-medium mb-3">
-                <Clock className="w-5 h-5 text-green-400" />
-                <span>Duration (minutes)</span>
-                <span className="text-red-400 text-sm">*</span>
+            <div style={{ marginBottom: "32px" }}>
+              <label style={{
+                display: "block",
+                marginBottom: "8px",
+                fontWeight: 500,
+                color: "#e0e0e0",
+                fontSize: "14px"
+              }}>
+                Duration (minutes) <span style={{ color: "#ff6b6b" }}>*</span>
               </label>
               <input
                 type="number"
                 name="durationMinutes"
                 value={formData.durationMinutes}
                 onChange={handleInputChange}
-                placeholder="30"
+                placeholder="60"
                 min="1"
-                className={`w-full px-4 py-4 bg-dark border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-200 text-lg ${
-                  errors.durationMinutes ? 'border-red-500' : 'border-gray-600'
-                }`}
+                max="300"
+                style={{
+                  ...inputStyle,
+                  borderColor: errors.durationMinutes ? "#ff6b6b" : "#555555"
+                }}
+                onFocus={(e) => {
+                  e.target.style.outline = "none";
+                  e.target.style.borderColor = "#007acc";
+                  e.target.style.backgroundColor = "#404040";
+                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                }}
+                onBlur={(e) => {
+                  if (!errors.durationMinutes) {
+                    e.target.style.borderColor = "#555555";
+                    e.target.style.backgroundColor = "#3a3a3a";
+                    e.target.style.boxShadow = "none";
+                  }
+                }}
               />
-              {errors.durationMinutes && <p className="mt-2 text-red-400 text-sm">{errors.durationMinutes}</p>}
+              {errors.durationMinutes && <p style={{ marginTop: "6px", fontSize: "12px", color: "#ff6b6b" }}>{errors.durationMinutes}</p>}
             </div>
 
             {/* Submit Buttons */}
-            <div className="flex items-center justify-end space-x-4 pt-8">
+            <div style={{
+              display: "flex",
+              gap: "16px",
+              justifyContent: "flex-end",
+              marginTop: "40px",
+              paddingTop: "24px",
+              borderTop: "1px solid #4a4a4a"
+            }}>
               <Link href="/trainings">
                 <button
                   type="button"
-                  className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors"
+                  style={{
+                    padding: "12px 24px",
+                    border: "1px solid #555555",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    minWidth: "120px",
+                    background: "#4a4a4a",
+                    color: "#e0e0e0"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = "#555555";
+                    e.target.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = "#4a4a4a";
+                    e.target.style.transform = "translateY(0)";
+                  }}
                 >
                   Cancel
                 </button>
@@ -292,18 +466,44 @@ export default function NewTrainingPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-cyber flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  padding: "12px 24px",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  cursor: loading ? "not-allowed" : "pointer",
+                  transition: "all 0.2s ease",
+                  minWidth: "120px",
+                  background: "#007acc",
+                  color: "white",
+                  opacity: loading ? 0.5 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (!loading) {
+                    e.target.style.background = "#0066aa";
+                    e.target.style.transform = "translateY(-1px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!loading) {
+                    e.target.style.background = "#007acc";
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }
+                }}
+                onMouseDown={(e) => {
+                  if (!loading) {
+                    e.target.style.transform = "translateY(0)";
+                  }
+                }}
               >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                ) : (
-                  <Save className="w-5 h-5" />
-                )}
-                <span>{loading ? 'Creating...' : 'Create Training'}</span>
+                {loading ? 'Creating...' : 'Create Training'}
               </button>
             </div>
           </form>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

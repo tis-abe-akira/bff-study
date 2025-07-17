@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Activity, TrendingUp, Calendar, Shield, LogOut, Target, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 
 interface User {
@@ -57,173 +55,463 @@ export default function Dashboard() {
   };
 
   if (!mounted) {
-    return <div className="min-h-screen bg-dark" />;
+    return <div style={{ minHeight: "100vh", background: "#1a1a1a" }} />;
   }
 
   return (
-    <div className="min-h-screen p-12">
-      <div className="max-w-5xl mx-auto px-12">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-20 py-12 px-8 border-b border-gray-800"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-5xl font-bold text-gradient mb-6">CyberFit Dashboard</h1>
-              <p className="text-gray-400 text-xl">
-                Welcome back, {user?.name || 'Training Operative'}
-              </p>
-            </div>
-            <div className="flex items-center space-x-6">
-              <button
-                onClick={handleSignOut}
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 hover:border-red-500/50 transition-all duration-300 text-red-400 hover:text-red-300"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm font-medium">Sign Out</span>
-              </button>
-              <div className="text-right">
-                <div className="text-sm text-gray-400">System Status</div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
-                  <span className="text-secondary text-sm font-medium">ONLINE</span>
-                </div>
+    <div style={{
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+      background: "#1a1a1a",
+      minHeight: "100vh",
+      color: "#ffffff"
+    }}>
+      {/* Header */}
+      <div style={{
+        background: "#2d2d2d",
+        borderBottom: "1px solid #4a4a4a",
+        padding: "32px 40px"
+      }}>
+        <div style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}>
+          <div>
+            <h1 style={{
+              fontSize: "32px",
+              fontWeight: 600,
+              marginBottom: "8px",
+              color: "#ffffff"
+            }}>
+              Training Dashboard
+            </h1>
+            <p style={{
+              fontSize: "16px",
+              color: "#b0b0b0"
+            }}>
+              Welcome back, {user?.name || 'Training Operative'}
+            </p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+            <div style={{ textAlign: "right" as const }}>
+              <div style={{ fontSize: "12px", color: "#b0b0b0", marginBottom: "4px" }}>Status</div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{
+                  width: "8px",
+                  height: "8px",
+                  background: "#007acc",
+                  borderRadius: "50%"
+                }} />
+                <span style={{ color: "#007acc", fontSize: "12px", fontWeight: 500 }}>ONLINE</span>
               </div>
+            </div>
+            <button
+              onClick={handleSignOut}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "12px 20px",
+                border: "1px solid #555555",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: 500,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                background: "#4a4a4a",
+                color: "#e0e0e0"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = "#ff6b6b";
+                e.target.style.borderColor = "#ff6b6b";
+                e.target.style.color = "#ffffff";
+                e.target.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = "#4a4a4a";
+                e.target.style.borderColor = "#555555";
+                e.target.style.color = "#e0e0e0";
+                e.target.style.transform = "translateY(0)";
+              }}
+            >
+              <span>←</span>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div style={{
+        maxWidth: "1200px",
+        margin: "40px auto",
+        padding: "0 40px"
+      }}>
+        {/* Stats Overview */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "24px",
+          marginBottom: "40px"
+        }}>
+          {/* Total Sessions Card */}
+          <div style={{
+            background: "#2d2d2d",
+            borderRadius: "8px",
+            padding: "32px",
+            border: "1px solid #4a4a4a",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "16px"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "#007acc20",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
+                <span style={{ color: "#007acc", fontSize: "20px" }}>📊</span>
+              </div>
+              <div style={{ textAlign: "right" as const }}>
+                <div style={{ fontSize: "28px", fontWeight: 700, color: "#ffffff" }}>147</div>
+                <div style={{ fontSize: "12px", color: "#b0b0b0" }}>SESSIONS</div>
+              </div>
+            </div>
+            <div style={{ fontSize: "16px", color: "#b0b0b0", marginBottom: "12px" }}>
+              Total Training Sessions
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ color: "#007acc", fontSize: "14px" }}>↗</span>
+              <span style={{ color: "#007acc", fontSize: "14px" }}>+12% this week</span>
             </div>
           </div>
-        </motion.div>
 
-        {/* Total Training Sessions Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-20 px-8"
-        >
-          <div className="card-cyber p-12 hover:border-primary/40 transition-all duration-300 max-w-md mx-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center">
-                <Activity className="w-8 h-8 text-primary" />
+          {/* Average Duration Card */}
+          <div style={{
+            background: "#2d2d2d",
+            borderRadius: "8px",
+            padding: "32px",
+            border: "1px solid #4a4a4a",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "16px"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "#00d2ff20",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
+                <span style={{ color: "#00d2ff", fontSize: "20px" }}>⏱️</span>
               </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-white">147</div>
-                <div className="text-sm text-gray-400">SESSIONS</div>
+              <div style={{ textAlign: "right" as const }}>
+                <div style={{ fontSize: "28px", fontWeight: 700, color: "#ffffff" }}>42</div>
+                <div style={{ fontSize: "12px", color: "#b0b0b0" }}>MINUTES</div>
               </div>
             </div>
-            <div className="text-base text-gray-400 mb-4">Total Training Sessions</div>
-            <div className="flex items-center">
-              <TrendingUp className="w-5 h-5 text-secondary mr-2" />
-              <span className="text-secondary">+12% this week</span>
+            <div style={{ fontSize: "16px", color: "#b0b0b0", marginBottom: "12px" }}>
+              Average Duration
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ color: "#00d2ff", fontSize: "14px" }}>→</span>
+              <span style={{ color: "#00d2ff", fontSize: "14px" }}>Steady pace</span>
             </div>
           </div>
-        </motion.div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 px-8">
-          
-          {/* Recent Training Sessions */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="lg:col-span-2"
-          >
-            <div className="card-cyber p-12 mx-4">
-              <div className="flex items-center justify-between mb-12">
-                <h2 className="text-2xl font-bold text-white">Recent Training Sessions</h2>
-                <Calendar className="w-6 h-6 text-gray-400" />
+          {/* Completion Rate Card */}
+          <div style={{
+            background: "#2d2d2d",
+            borderRadius: "8px",
+            padding: "32px",
+            border: "1px solid #4a4a4a",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "16px"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "#00ff9520",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
+                <span style={{ color: "#00ff95", fontSize: "20px" }}>🎯</span>
               </div>
-              
-              <div className="space-y-8">
-                {[
-                  { name: 'Strength Circuit Alpha', duration: '45 min', completion: '100%', type: 'strength' },
-                  { name: 'Cardio Burn Protocol', duration: '30 min', completion: '95%', type: 'cardio' },
-                  { name: 'Flexibility Matrix', duration: '20 min', completion: '100%', type: 'flexibility' },
-                  { name: 'Core Stability Drill', duration: '25 min', completion: '88%', type: 'core' }
-                ].map((session, index) => (
-                  <div key={index} className="flex items-center justify-between p-8 mx-4 rounded-lg glass-effect hover:border-primary/20 transition-all duration-300">
-                    <div className="flex items-center space-x-6">
-                      <div className={`w-12 h-12 rounded-lg ${
-                        session.type === 'strength' ? 'bg-primary/20' :
-                        session.type === 'cardio' ? 'bg-secondary/20' :
-                        session.type === 'flexibility' ? 'bg-accent/20' : 'bg-primary/20'
-                      } flex items-center justify-center`}>
-                        <Activity className={`w-6 h-6 ${
-                          session.type === 'strength' ? 'text-primary' :
-                          session.type === 'cardio' ? 'text-secondary' :
-                          session.type === 'flexibility' ? 'text-accent' : 'text-primary'
-                        }`} />
-                      </div>
-                      <div>
-                        <div className="text-white font-medium text-lg">{session.name}</div>
-                        <div className="text-gray-400">{session.duration}</div>
-                      </div>
+              <div style={{ textAlign: "right" as const }}>
+                <div style={{ fontSize: "28px", fontWeight: 700, color: "#ffffff" }}>94%</div>
+                <div style={{ fontSize: "12px", color: "#b0b0b0" }}>COMPLETE</div>
+              </div>
+            </div>
+            <div style={{ fontSize: "16px", color: "#b0b0b0", marginBottom: "12px" }}>
+              Completion Rate
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ color: "#00ff95", fontSize: "14px" }}>↗</span>
+              <span style={{ color: "#00ff95", fontSize: "14px" }}>Excellent</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Grid */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: "40px"
+        }}>
+          {/* Recent Sessions */}
+          <div style={{
+            background: "#2d2d2d",
+            borderRadius: "8px",
+            padding: "32px",
+            border: "1px solid #4a4a4a",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "24px"
+            }}>
+              <h2 style={{
+                fontSize: "20px",
+                fontWeight: 600,
+                color: "#ffffff",
+                margin: 0
+              }}>
+                Recent Training Sessions
+              </h2>
+              <span style={{ fontSize: "18px" }}>📅</span>
+            </div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {[
+                { name: 'Strength Circuit Alpha', duration: '45 min', completion: '100%', type: '💪' },
+                { name: 'Cardio Burn Protocol', duration: '30 min', completion: '95%', type: '🏃' },
+                { name: 'Flexibility Matrix', duration: '20 min', completion: '100%', type: '🧘' },
+                { name: 'Core Stability Drill', duration: '25 min', completion: '88%', type: '⚡' }
+              ].map((session, index) => (
+                <div key={index} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "20px",
+                  background: "#3a3a3a",
+                  borderRadius: "6px",
+                  border: "1px solid #555555"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{
+                      width: "40px",
+                      height: "40px",
+                      background: "#007acc20",
+                      borderRadius: "6px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "18px"
+                    }}>
+                      {session.type}
                     </div>
-                    <div className="text-right">
-                      <div className="text-secondary font-medium text-lg">{session.completion}</div>
-                      <div className="text-gray-400">Complete</div>
+                    <div>
+                      <div style={{ color: "#ffffff", fontWeight: 500, fontSize: "16px" }}>
+                        {session.name}
+                      </div>
+                      <div style={{ color: "#b0b0b0", fontSize: "14px" }}>
+                        {session.duration}
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div style={{ textAlign: "right" as const }}>
+                    <div style={{ color: "#007acc", fontWeight: 600, fontSize: "16px" }}>
+                      {session.completion}
+                    </div>
+                    <div style={{ color: "#b0b0b0", fontSize: "12px" }}>
+                      Complete
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Sidebar */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="space-y-12"
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             {/* Profile Status */}
-            <div className="card-cyber p-12 mx-4">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold text-white">Profile Status</h3>
-                <Shield className="w-6 h-6 text-primary" />
+            <div style={{
+              background: "#2d2d2d",
+              borderRadius: "8px",
+              padding: "32px",
+              border: "1px solid #4a4a4a",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+            }}>
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "20px"
+              }}>
+                <h3 style={{
+                  fontSize: "18px",
+                  fontWeight: 600,
+                  color: "#ffffff",
+                  margin: 0
+                }}>
+                  Profile Status
+                </h3>
+                <span style={{ fontSize: "18px" }}>🛡️</span>
               </div>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">User ID</span>
-                  <span className="text-white">{user?.id?.slice(-8) || 'de905ed2'}</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#b0b0b0", fontSize: "14px" }}>User ID</span>
+                  <span style={{ color: "#ffffff", fontSize: "14px" }}>
+                    {user?.id?.slice(-8) || 'de905ed2'}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Email</span>
-                  <span className="text-white">{user?.email || 'test@example.com'}</span>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#b0b0b0", fontSize: "14px" }}>Email</span>
+                  <span style={{ color: "#ffffff", fontSize: "14px" }}>
+                    {user?.email || 'test@example.com'}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Access Level</span>
-                  <span className="text-secondary">ELITE</span>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#b0b0b0", fontSize: "14px" }}>Access Level</span>
+                  <span style={{ color: "#007acc", fontSize: "14px", fontWeight: 600 }}>ELITE</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="card-cyber p-12 mx-4">
-              <h3 className="text-xl font-bold text-white mb-8">Quick Actions</h3>
-              <div className="space-y-4">
+            <div style={{
+              background: "#2d2d2d",
+              borderRadius: "8px",
+              padding: "32px",
+              border: "1px solid #4a4a4a",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+            }}>
+              <h3 style={{
+                fontSize: "18px",
+                fontWeight: 600,
+                color: "#ffffff",
+                margin: "0 0 20px 0"
+              }}>
+                Quick Actions
+              </h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <Link href="/trainings/new">
-                  <button className="w-full btn-cyber py-4 text-base flex items-center justify-center">
-                    <Activity className="w-5 h-5 mr-3" />
-                    Create New Training
+                  <button style={{
+                    width: "100%",
+                    padding: "16px 20px",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    background: "#007acc",
+                    color: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = "#0066aa";
+                    e.target.style.transform = "translateY(-1px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = "#007acc";
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                  >
+                    <span>📝</span>
+                    <span>Create New Training</span>
                   </button>
                 </Link>
                 <Link href="/trainings">
-                  <button className="w-full p-4 rounded-lg glass-effect hover:border-primary/30 transition-all duration-300 text-white text-base flex items-center justify-center">
-                    <Target className="w-5 h-5 mr-3" />
-                    View All Trainings
+                  <button style={{
+                    width: "100%",
+                    padding: "16px 20px",
+                    border: "1px solid #555555",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    background: "#4a4a4a",
+                    color: "#e0e0e0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = "#555555";
+                    e.target.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = "#4a4a4a";
+                    e.target.style.transform = "translateY(0)";
+                  }}
+                  >
+                    <span>📋</span>
+                    <span>View All Trainings</span>
                   </button>
                 </Link>
-                <button className="w-full p-4 rounded-lg glass-effect hover:border-secondary/30 transition-all duration-300 text-white text-base flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 mr-3" />
-                  Analytics Report
+                <button style={{
+                  width: "100%",
+                  padding: "16px 20px",
+                  border: "1px solid #555555",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  background: "#4a4a4a",
+                  color: "#e0e0e0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = "#555555";
+                  e.target.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = "#4a4a4a";
+                  e.target.style.transform = "translateY(0)";
+                }}
+                >
+                  <span>📈</span>
+                  <span>Analytics Report</span>
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
