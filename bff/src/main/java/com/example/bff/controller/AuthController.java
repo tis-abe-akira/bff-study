@@ -1,8 +1,14 @@
 package com.example.bff.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -17,6 +23,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    @Autowired
+    private OAuth2AuthorizedClientService authorizedClientService;
 
     @GetMapping("/login")
     public ResponseEntity<Map<String, String>> login() {
@@ -66,17 +75,56 @@ public class AuthController {
     }
     
     @GetMapping("/logout")
-    public void logoutGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // 1. Spring Security セッションを無効化
+    public void logoutGet(@AuthenticationPrincipal OAuth2User principal,
+                         HttpServletRequest request, 
+                         HttpServletResponse response) throws Exception {
+        
+        String keycloakLogoutUrl = "http://localhost:3000?logout=success";
+        
+        try {
+            // 1. ID Tokenを取得してKeyCloakログアウトURL構築
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication instanceof OAuth2AuthenticationToken) {
+                OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+                
+                // OidcUserの場合はID Tokenが取得可能
+                if (principal instanceof OidcUser) {
+                    OidcUser oidcUser = (OidcUser) principal;
+                    String idToken = oidcUser.getIdToken().getTokenValue();
+                    
+                    // KeyCloak 23.x対応のログアウトURL構築
+                    keycloakLogoutUrl = "http://localhost:8180/realms/training/protocol/openid-connect/logout" +
+                        "?id_token_hint=" + idToken +
+                        "&post_logout_redirect_uri=" + java.net.URLEncoder.encode("http://localhost:3000?logout=success", "UTF-8");
+                } else {
+                    // OidcUserでない場合はOAuth2AuthorizedClientからトークンを取得
+                    OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
+                        oauthToken.getAuthorizedClientRegistrationId(), 
+                        oauthToken.getName()
+                    );
+                    
+                    if (authorizedClient != null) {
+                        // KeyCloakログアウトURL（ID Token なし）
+                        keycloakLogoutUrl = "http://localhost:8180/realms/training/protocol/openid-connect/logout" +
+                            "?post_logout_redirect_uri=" + java.net.URLEncoder.encode("http://localhost:3000?logout=success", "UTF-8");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("KeyCloak logout URL construction error: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        // 2. Spring Security セッションを無効化
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
         
-        // 2. 認証をクリア
+        // 3. 認証をクリア
         SecurityContextHolder.clearContext();
         
-        // 3. 全てのCookieを削除
+        // 4. 全てのCookieを削除
         Cookie jsessionCookie = new Cookie("JSESSIONID", null);
         jsessionCookie.setMaxAge(0);
         jsessionCookie.setPath("/");
@@ -93,8 +141,8 @@ public class AuthController {
             }
         }
         
-        // 4. シンプルにフロントエンドにリダイレクト
-        response.sendRedirect("http://localhost:3000?logout=success");
+        // 5. KeyCloakログアウトまたはフロントエンドにリダイレクト
+        response.sendRedirect(keycloakLogoutUrl);
     }
 
     @GetMapping("/logout-success")
