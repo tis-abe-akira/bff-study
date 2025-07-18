@@ -36,13 +36,66 @@ cd backend  # または cd bff
 ./mvnw clean install     # ビルド
 ```
 
-## 認証フロー
+## 認証フローとアーキテクチャ
 
-1. ユーザーがFrontendの保護されたページにアクセス
-2. BFFが認証状態をチェック（セッションベース）
-3. 未認証の場合、KeyCloakにリダイレクト
-4. 認証後、BFFがセッションを確立
-5. BFFがBackendAPIを呼び出し時に`X-User-ID`ヘッダーを付与
+### 現状のアーキテクチャ (開発環境)
+
+現状はBFFがAPI Gatewayの役割を兼務し、バックエンドへのリクエスト時にカスタムヘッダーでユーザー情報を連携する、信頼ベースのシンプルな構成です。
+
+- **認証フロー**:
+    1. ユーザーがFrontendの保護されたページにアクセス
+    2. BFFが認証状態をチェック（セッションベース）
+    3. 未認証の場合、KeyCloakにリダイレクト
+    4. 認証後、BFFがセッションを確立
+    5. BFFがBackendAPIを呼び出し時に`X-User-ID`ヘッダーを付与
+
+- **シーケンス図**:
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant BFF
+    participant Backend
+
+    Frontend->>+BFF: GET /api/training-plans (with Session Cookie)
+    BFF->>BFF: セッションからユーザーIDを取得
+    BFF->>+Backend: GET /api/training-plans (Header: X-User-ID)
+    Backend-->>-BFF: 200 OK (Training Plans)
+    BFF-->>-Frontend: 200 OK (Training Plans)
+```
+
+---
+
+### 今後の課題: 本番構成への移行 (AWS API Gateway)
+
+本番環境では、セキュリティとスケーラビリティを向上させるため、AWS API GatewayをBFFとバックエンドの間に配置します。これにより、JWTを利用した検証ベースの堅牢なアーキテクチャに移行します。
+
+- **主な変更点**:
+    - BFFはバックエンドを直接呼び出す代わりに、AWS API Gatewayのエンドポイントを呼び出します。
+    - BFFは`X-User-ID`ヘッダーの代わりに、Keycloakから取得したJWT（アクセストークン）を`Authorization: Bearer`ヘッダーに含めて送信します。
+    - AWS API Gatewayは、JWTオーソライザー機能を用いて、リクエストがバックエンドに到達する前にJWTの署名と有効期限を検証します。
+    - バックエンドは、API Gatewayによって検証済みのJWTを受け取り、そこからユーザー情報（`sub`クレーム）を読み取って処理を行います。
+
+- **シーケンス図**:
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant BFF
+    participant AWS_APIGateway as AWS API Gateway
+    participant Backend
+
+    Frontend->>+BFF: GET /api/training-plans (with Session Cookie)
+    BFF->>BFF: セッションからJWT(アクセストークン)を取得
+    BFF->>+AWS_APIGateway: GET /api/training-plans (Header: Authorization: Bearer JWT)
+    AWS_APIGateway->>AWS_APIGateway: JWTの署名と有効期限を検証
+    Note right of AWS_APIGateway: 検証OKの場合のみ後続へ
+    AWS_APIGateway->>+Backend: GET /api/training-plans (JWTをそのまま転送)
+    Backend->>Backend: JWTからユーザーID(sub)をデコードして利用
+    Backend-->>-AWS_APIGateway: 200 OK (Training Plans)
+    AWS_APIGateway-->>-BFF: 200 OK (Training Plans)
+    BFF-->>-Frontend: 200 OK (Training Plans)
+```
+
+---
 
 ## 重要な設定
 
