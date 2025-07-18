@@ -466,34 +466,6 @@ export default function TrainingsPage() {
                         year: 'numeric'
                       })}
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Edit functionality
-                      }}
-                      style={{
-                        width: "32px",
-                        height: "32px",
-                        background: "#4a4a4a",
-                        border: "1px solid #555555",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.2s ease"
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.target as HTMLElement).style.background = "#555555";
-                        (e.target as HTMLElement).style.transform = "translateY(-1px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.target as HTMLElement).style.background = "#4a4a4a";
-                        (e.target as HTMLElement).style.transform = "translateY(0)";
-                      }}
-                    >
-                      <span style={{ color: "#e0e0e0", fontSize: "14px" }}>✏️</span>
-                    </button>
                     <Link href={`/trainings/${training.id}`}>
                       <button style={{
                         padding: "8px 16px",
