@@ -163,19 +163,6 @@ export default function Header({ title, subtitle, showBackButton = false, backHr
             )}
           </div>
 
-          {/* Status Indicator */}
-          <div style={{ textAlign: "right" as const }}>
-            <div style={{ fontSize: "11px", color: "#b0b0b0", marginBottom: "2px" }}>Status</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <div style={{
-                width: "6px",
-                height: "6px",
-                background: "#007acc",
-                borderRadius: "50%"
-              }} />
-              <span style={{ color: "#007acc", fontSize: "11px", fontWeight: 500 }}>ONLINE</span>
-            </div>
-          </div>
 
           {/* Sign Out Button */}
           <button
