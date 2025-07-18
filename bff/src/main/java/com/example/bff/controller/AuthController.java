@@ -28,11 +28,9 @@ public class AuthController {
     private OAuth2AuthorizedClientService authorizedClientService;
 
     @GetMapping("/login")
-    public ResponseEntity<Map<String, String>> login() {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Please authenticate with OAuth2");
-        response.put("authUrl", "/oauth2/authorization/keycloak");
-        return ResponseEntity.ok(response);
+    public RedirectView login() {
+        // 直接KeyCloakログインページにリダイレクト
+        return new RedirectView("/oauth2/authorization/keycloak");
     }
 
     @GetMapping("/status")
