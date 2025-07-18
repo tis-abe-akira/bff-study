@@ -3,14 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Header from '@/components/Header';
 
 export default function NewTrainingPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [types, setTypes] = useState<string[]>([]);
-  const [difficulties, setDifficulties] = useState<string[]>([]);
-  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -21,39 +19,13 @@ export default function NewTrainingPage() {
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
+  // フロントエンドで選択肢を定義
+  const types = ['strength', 'cardio', 'flexibility', 'core'];
+  const difficulties = ['beginner', 'intermediate', 'advanced'];
+
   useEffect(() => {
     setMounted(true);
-    fetchTypes();
-    fetchDifficulties();
   }, []);
-
-  const fetchTypes = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/trainings/types', {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTypes(data);
-      }
-    } catch (error) {
-      console.error('Error fetching types:', error);
-    }
-  };
-
-  const fetchDifficulties = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/trainings/difficulties', {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setDifficulties(data);
-      }
-    } catch (error) {
-      console.error('Error fetching difficulties:', error);
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -171,6 +143,13 @@ export default function NewTrainingPage() {
       minHeight: "100vh",
       color: "#ffffff"
     }}>
+      <Header 
+        title="Create New Training" 
+        subtitle="Design your next training protocol"
+        showBackButton={true}
+        backHref="/trainings"
+      />
+
       <div style={{
         background: "#2d2d2d",
         maxWidth: "600px",
@@ -179,43 +158,6 @@ export default function NewTrainingPage() {
         overflow: "hidden",
         boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
       }}>
-        {/* Header */}
-        <div style={{
-          background: "#3a3a3a",
-          padding: "32px 40px",
-          borderBottom: "1px solid #4a4a4a",
-          position: "relative" as const
-        }}>
-          <Link href="/trainings">
-            <button style={{
-              position: "absolute" as const,
-              left: "16px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              fontSize: "20px",
-              color: "#b0b0b0",
-              cursor: "pointer",
-              background: "none",
-              border: "none"
-            }}>
-              ←
-            </button>
-          </Link>
-          <h1 style={{
-            fontSize: "24px",
-            fontWeight: 600,
-            marginBottom: "8px",
-            color: "#ffffff"
-          }}>
-            Create New Training
-          </h1>
-          <p style={{
-            fontSize: "14px",
-            color: "#b0b0b0"
-          }}>
-            Design your next training protocol
-          </p>
-        </div>
         
         {/* Form */}
         <div style={{ padding: "40px" }}>
@@ -242,16 +184,16 @@ export default function NewTrainingPage() {
                   borderColor: errors.title ? "#ff6b6b" : "#555555"
                 }}
                 onFocus={(e) => {
-                  e.target.style.outline = "none";
-                  e.target.style.borderColor = "#007acc";
-                  e.target.style.backgroundColor = "#404040";
-                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                  (e.target as HTMLElement).style.outline = "none";
+                  (e.target as HTMLElement).style.borderColor = "#007acc";
+                  (e.target as HTMLElement).style.backgroundColor = "#404040";
+                  (e.target as HTMLElement).style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
                 }}
                 onBlur={(e) => {
                   if (!errors.title) {
-                    e.target.style.borderColor = "#555555";
-                    e.target.style.backgroundColor = "#3a3a3a";
-                    e.target.style.boxShadow = "none";
+                    (e.target as HTMLElement).style.borderColor = "#555555";
+                    (e.target as HTMLElement).style.backgroundColor = "#3a3a3a";
+                    (e.target as HTMLElement).style.boxShadow = "none";
                   }
                 }}
               />
@@ -282,15 +224,15 @@ export default function NewTrainingPage() {
                   lineHeight: 1.6
                 }}
                 onFocus={(e) => {
-                  e.target.style.outline = "none";
-                  e.target.style.borderColor = "#007acc";
-                  e.target.style.backgroundColor = "#404040";
-                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                  (e.target as HTMLElement).style.outline = "none";
+                  (e.target as HTMLElement).style.borderColor = "#007acc";
+                  (e.target as HTMLElement).style.backgroundColor = "#404040";
+                  (e.target as HTMLElement).style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = "#555555";
-                  e.target.style.backgroundColor = "#3a3a3a";
-                  e.target.style.boxShadow = "none";
+                  (e.target as HTMLElement).style.borderColor = "#555555";
+                  (e.target as HTMLElement).style.backgroundColor = "#3a3a3a";
+                  (e.target as HTMLElement).style.boxShadow = "none";
                 }}
               />
             </div>
@@ -321,16 +263,16 @@ export default function NewTrainingPage() {
                     borderColor: errors.type ? "#ff6b6b" : "#555555"
                   }}
                   onFocus={(e) => {
-                    e.target.style.outline = "none";
-                    e.target.style.borderColor = "#007acc";
-                    e.target.style.backgroundColor = "#404040";
-                    e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                    (e.target as HTMLElement).style.outline = "none";
+                    (e.target as HTMLElement).style.borderColor = "#007acc";
+                    (e.target as HTMLElement).style.backgroundColor = "#404040";
+                    (e.target as HTMLElement).style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
                   }}
                   onBlur={(e) => {
                     if (!errors.type) {
-                      e.target.style.borderColor = "#555555";
-                      e.target.style.backgroundColor = "#3a3a3a";
-                      e.target.style.boxShadow = "none";
+                      (e.target as HTMLElement).style.borderColor = "#555555";
+                      (e.target as HTMLElement).style.backgroundColor = "#3a3a3a";
+                      (e.target as HTMLElement).style.boxShadow = "none";
                     }
                   }}
                 >
@@ -363,16 +305,16 @@ export default function NewTrainingPage() {
                     borderColor: errors.difficulty ? "#ff6b6b" : "#555555"
                   }}
                   onFocus={(e) => {
-                    e.target.style.outline = "none";
-                    e.target.style.borderColor = "#007acc";
-                    e.target.style.backgroundColor = "#404040";
-                    e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                    (e.target as HTMLElement).style.outline = "none";
+                    (e.target as HTMLElement).style.borderColor = "#007acc";
+                    (e.target as HTMLElement).style.backgroundColor = "#404040";
+                    (e.target as HTMLElement).style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
                   }}
                   onBlur={(e) => {
                     if (!errors.difficulty) {
-                      e.target.style.borderColor = "#555555";
-                      e.target.style.backgroundColor = "#3a3a3a";
-                      e.target.style.boxShadow = "none";
+                      (e.target as HTMLElement).style.borderColor = "#555555";
+                      (e.target as HTMLElement).style.backgroundColor = "#3a3a3a";
+                      (e.target as HTMLElement).style.boxShadow = "none";
                     }
                   }}
                 >
@@ -411,16 +353,16 @@ export default function NewTrainingPage() {
                   borderColor: errors.durationMinutes ? "#ff6b6b" : "#555555"
                 }}
                 onFocus={(e) => {
-                  e.target.style.outline = "none";
-                  e.target.style.borderColor = "#007acc";
-                  e.target.style.backgroundColor = "#404040";
-                  e.target.style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
+                  (e.target as HTMLElement).style.outline = "none";
+                  (e.target as HTMLElement).style.borderColor = "#007acc";
+                  (e.target as HTMLElement).style.backgroundColor = "#404040";
+                  (e.target as HTMLElement).style.boxShadow = "0 0 0 2px rgba(0, 122, 204, 0.2)";
                 }}
                 onBlur={(e) => {
                   if (!errors.durationMinutes) {
-                    e.target.style.borderColor = "#555555";
-                    e.target.style.backgroundColor = "#3a3a3a";
-                    e.target.style.boxShadow = "none";
+                    (e.target as HTMLElement).style.borderColor = "#555555";
+                    (e.target as HTMLElement).style.backgroundColor = "#3a3a3a";
+                    (e.target as HTMLElement).style.boxShadow = "none";
                   }
                 }}
               />
@@ -452,12 +394,12 @@ export default function NewTrainingPage() {
                     color: "#e0e0e0"
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.background = "#555555";
-                    e.target.style.transform = "translateY(-1px)";
+                    (e.target as HTMLElement).style.background = "#555555";
+                    (e.target as HTMLElement).style.transform = "translateY(-1px)";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.background = "#4a4a4a";
-                    e.target.style.transform = "translateY(0)";
+                    (e.target as HTMLElement).style.background = "#4a4a4a";
+                    (e.target as HTMLElement).style.transform = "translateY(0)";
                   }}
                 >
                   Cancel
@@ -481,21 +423,21 @@ export default function NewTrainingPage() {
                 }}
                 onMouseEnter={(e) => {
                   if (!loading) {
-                    e.target.style.background = "#0066aa";
-                    e.target.style.transform = "translateY(-1px)";
-                    e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+                    (e.target as HTMLElement).style.background = "#0066aa";
+                    (e.target as HTMLElement).style.transform = "translateY(-1px)";
+                    (e.target as HTMLElement).style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!loading) {
-                    e.target.style.background = "#007acc";
-                    e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "none";
+                    (e.target as HTMLElement).style.background = "#007acc";
+                    (e.target as HTMLElement).style.transform = "translateY(0)";
+                    (e.target as HTMLElement).style.boxShadow = "none";
                   }
                 }}
                 onMouseDown={(e) => {
                   if (!loading) {
-                    e.target.style.transform = "translateY(0)";
+                    (e.target as HTMLElement).style.transform = "translateY(0)";
                   }
                 }}
               >

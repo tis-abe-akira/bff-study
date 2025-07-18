@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 interface User {
   id?: string;
@@ -31,28 +32,6 @@ export default function Dashboard() {
       .catch(err => console.error('Failed to get user info:', err));
   }, []);
 
-  const handleSignOut = async () => {
-    try {
-      // 1. ローカルストレージとセッションストレージをクリア
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // 2. 手動でCookieを削除
-      document.cookie.split(";").forEach(function(c) {
-        const eqPos = c.indexOf("=");
-        const name = eqPos > -1 ? c.substr(0, eqPos) : c;
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
-      });
-      
-      // 3. BFFのログアウトエンドポイントに移動
-      window.location.href = 'http://localhost:8080/api/auth/logout';
-    } catch (error) {
-      console.error('Logout error:', error);
-      // エラーでも強制的にログアウト
-      window.location.href = 'http://localhost:8080/api/auth/logout';
-    }
-  };
 
   if (!mounted) {
     return <div style={{ minHeight: "100vh", background: "#1a1a1a" }} />;
@@ -65,83 +44,10 @@ export default function Dashboard() {
       minHeight: "100vh",
       color: "#ffffff"
     }}>
-      {/* Header */}
-      <div style={{
-        background: "#2d2d2d",
-        borderBottom: "1px solid #4a4a4a",
-        padding: "32px 40px"
-      }}>
-        <div style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}>
-          <div>
-            <h1 style={{
-              fontSize: "32px",
-              fontWeight: 600,
-              marginBottom: "8px",
-              color: "#ffffff"
-            }}>
-              Training Dashboard
-            </h1>
-            <p style={{
-              fontSize: "16px",
-              color: "#b0b0b0"
-            }}>
-              Welcome back, {user?.name || 'Training Operative'}
-            </p>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-            <div style={{ textAlign: "right" as const }}>
-              <div style={{ fontSize: "12px", color: "#b0b0b0", marginBottom: "4px" }}>Status</div>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{
-                  width: "8px",
-                  height: "8px",
-                  background: "#007acc",
-                  borderRadius: "50%"
-                }} />
-                <span style={{ color: "#007acc", fontSize: "12px", fontWeight: 500 }}>ONLINE</span>
-              </div>
-            </div>
-            <button
-              onClick={handleSignOut}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "12px 20px",
-                border: "1px solid #555555",
-                borderRadius: "6px",
-                fontSize: "14px",
-                fontWeight: 500,
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                background: "#4a4a4a",
-                color: "#e0e0e0"
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "#ff6b6b";
-                e.target.style.borderColor = "#ff6b6b";
-                e.target.style.color = "#ffffff";
-                e.target.style.transform = "translateY(-1px)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "#4a4a4a";
-                e.target.style.borderColor = "#555555";
-                e.target.style.color = "#e0e0e0";
-                e.target.style.transform = "translateY(0)";
-              }}
-            >
-              <span>←</span>
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <Header 
+        title="Training Dashboard" 
+        subtitle={`Welcome back, ${user?.name || 'Training Operative'}`}
+      />
 
       {/* Main Content */}
       <div style={{
@@ -437,14 +343,14 @@ export default function Dashboard() {
                     gap: "8px"
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.background = "#0066aa";
-                    e.target.style.transform = "translateY(-1px)";
-                    e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+                    (e.target as HTMLElement).style.background = "#0066aa";
+                    (e.target as HTMLElement).style.transform = "translateY(-1px)";
+                    (e.target as HTMLElement).style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.background = "#007acc";
-                    e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "none";
+                    (e.target as HTMLElement).style.background = "#007acc";
+                    (e.target as HTMLElement).style.transform = "translateY(0)";
+                    (e.target as HTMLElement).style.boxShadow = "none";
                   }}
                   >
                     <span>📝</span>
@@ -469,12 +375,12 @@ export default function Dashboard() {
                     gap: "8px"
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.background = "#555555";
-                    e.target.style.transform = "translateY(-1px)";
+                    (e.target as HTMLElement).style.background = "#555555";
+                    (e.target as HTMLElement).style.transform = "translateY(-1px)";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.background = "#4a4a4a";
-                    e.target.style.transform = "translateY(0)";
+                    (e.target as HTMLElement).style.background = "#4a4a4a";
+                    (e.target as HTMLElement).style.transform = "translateY(0)";
                   }}
                   >
                     <span>📋</span>
@@ -498,12 +404,12 @@ export default function Dashboard() {
                   gap: "8px"
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = "#555555";
-                  e.target.style.transform = "translateY(-1px)";
+                  (e.target as HTMLElement).style.background = "#555555";
+                  (e.target as HTMLElement).style.transform = "translateY(-1px)";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = "#4a4a4a";
-                  e.target.style.transform = "translateY(0)";
+                  (e.target as HTMLElement).style.background = "#4a4a4a";
+                  (e.target as HTMLElement).style.transform = "translateY(0)";
                 }}
                 >
                   <span>📈</span>

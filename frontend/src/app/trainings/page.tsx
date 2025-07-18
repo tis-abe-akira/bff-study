@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 interface Training {
   id: number;
@@ -21,14 +22,14 @@ export default function TrainingsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
-  const [types, setTypes] = useState<string[]>([]);
-  const [difficulties, setDifficulties] = useState<string[]>([]);
+
+  // フロントエンドで選択肢を定義
+  const types = ['strength', 'cardio', 'flexibility', 'core'];
+  const difficulties = ['beginner', 'intermediate', 'advanced'];
 
   useEffect(() => {
     setMounted(true);
     fetchTrainings();
-    fetchTypes();
-    fetchDifficulties();
   }, []);
 
   const fetchTrainings = async () => {
@@ -48,44 +49,19 @@ export default function TrainingsPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setTrainings(data);
+        setTrainings(Array.isArray(data) ? data : []);
       } else {
-        console.error('Failed to fetch trainings');
+        console.error('Failed to fetch trainings:', response.status);
+        setTrainings([]);
       }
     } catch (error) {
       console.error('Error fetching trainings:', error);
+      setTrainings([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchTypes = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/trainings/types', {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTypes(data);
-      }
-    } catch (error) {
-      console.error('Error fetching types:', error);
-    }
-  };
-
-  const fetchDifficulties = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/trainings/difficulties', {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setDifficulties(data);
-      }
-    } catch (error) {
-      console.error('Error fetching difficulties:', error);
-    }
-  };
 
   const handleSearch = () => {
     fetchTrainings();
@@ -139,31 +115,19 @@ export default function TrainingsPage() {
       minHeight: "100vh",
       color: "#ffffff"
     }}>
-      {/* Header */}
+      <Header 
+        title="Training Sessions" 
+        subtitle="Manage your cyber training protocols"
+      />
+
+      {/* Action Bar */}
       <div style={{
-        background: "#2d2d2d",
-        padding: "24px 32px",
-        borderBottom: "1px solid #4a4a4a",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "20px 32px 0 32px",
         display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
+        justifyContent: "flex-end"
       }}>
-        <div>
-          <h1 style={{
-            fontSize: "28px",
-            fontWeight: 600,
-            color: "#ffffff",
-            marginBottom: "4px"
-          }}>
-            Training Sessions
-          </h1>
-          <p style={{
-            fontSize: "14px",
-            color: "#b0b0b0"
-          }}>
-            Manage your cyber training protocols
-          </p>
-        </div>
         <Link href="/trainings/new">
           <button style={{
             padding: "12px 24px",
@@ -180,14 +144,14 @@ export default function TrainingsPage() {
             gap: "8px"
           }}
           onMouseEnter={(e) => {
-            e.target.style.background = "#0066aa";
-            e.target.style.transform = "translateY(-1px)";
-            e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+            (e.target as HTMLElement).style.background = "#0066aa";
+            (e.target as HTMLElement).style.transform = "translateY(-1px)";
+            (e.target as HTMLElement).style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = "#007acc";
-            e.target.style.transform = "translateY(0)";
-            e.target.style.boxShadow = "none";
+            (e.target as HTMLElement).style.background = "#007acc";
+            (e.target as HTMLElement).style.transform = "translateY(0)";
+            (e.target as HTMLElement).style.boxShadow = "none";
           }}
           >
             <span>+</span>
@@ -200,7 +164,7 @@ export default function TrainingsPage() {
       <div style={{
         maxWidth: "1200px",
         margin: "0 auto",
-        padding: "32px"
+        padding: "20px 32px 32px 32px"
       }}>
         {/* Filters Section */}
         <div style={{
@@ -370,14 +334,14 @@ export default function TrainingsPage() {
               gap: "8px"
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = "#0066aa";
-              e.target.style.transform = "translateY(-1px)";
-              e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+              (e.target as HTMLElement).style.background = "#0066aa";
+              (e.target as HTMLElement).style.transform = "translateY(-1px)";
+              (e.target as HTMLElement).style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = "#007acc";
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "none";
+              (e.target as HTMLElement).style.background = "#007acc";
+              (e.target as HTMLElement).style.transform = "translateY(0)";
+              (e.target as HTMLElement).style.boxShadow = "none";
             }}
           >
             <span>🔍</span>
@@ -420,14 +384,14 @@ export default function TrainingsPage() {
                   cursor: "pointer"
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.borderColor = "#007acc";
-                  e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)";
+                  (e.target as HTMLElement).style.borderColor = "#007acc";
+                  (e.target as HTMLElement).style.transform = "translateY(-2px)";
+                  (e.target as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.borderColor = "#4a4a4a";
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "none";
+                  (e.target as HTMLElement).style.borderColor = "#4a4a4a";
+                  (e.target as HTMLElement).style.transform = "translateY(0)";
+                  (e.target as HTMLElement).style.boxShadow = "none";
                 }}
               >
                 <div style={{
@@ -520,12 +484,12 @@ export default function TrainingsPage() {
                         transition: "all 0.2s ease"
                       }}
                       onMouseEnter={(e) => {
-                        e.target.style.background = "#555555";
-                        e.target.style.transform = "translateY(-1px)";
+                        (e.target as HTMLElement).style.background = "#555555";
+                        (e.target as HTMLElement).style.transform = "translateY(-1px)";
                       }}
                       onMouseLeave={(e) => {
-                        e.target.style.background = "#4a4a4a";
-                        e.target.style.transform = "translateY(0)";
+                        (e.target as HTMLElement).style.background = "#4a4a4a";
+                        (e.target as HTMLElement).style.transform = "translateY(0)";
                       }}
                     >
                       <span style={{ color: "#e0e0e0", fontSize: "14px" }}>✏️</span>
@@ -544,12 +508,12 @@ export default function TrainingsPage() {
                         textDecoration: "none"
                       }}
                       onMouseEnter={(e) => {
-                        e.target.style.background = "#555555";
-                        e.target.style.transform = "translateY(-1px)";
+                        (e.target as HTMLElement).style.background = "#555555";
+                        (e.target as HTMLElement).style.transform = "translateY(-1px)";
                       }}
                       onMouseLeave={(e) => {
-                        e.target.style.background = "#4a4a4a";
-                        e.target.style.transform = "translateY(0)";
+                        (e.target as HTMLElement).style.background = "#4a4a4a";
+                        (e.target as HTMLElement).style.transform = "translateY(0)";
                       }}
                       >
                         View Details
@@ -598,14 +562,14 @@ export default function TrainingsPage() {
                 transition: "all 0.2s ease"
               }}
               onMouseEnter={(e) => {
-                e.target.style.background = "#0066aa";
-                e.target.style.transform = "translateY(-1px)";
-                e.target.style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
+                (e.target as HTMLElement).style.background = "#0066aa";
+                (e.target as HTMLElement).style.transform = "translateY(-1px)";
+                (e.target as HTMLElement).style.boxShadow = "0 4px 12px rgba(0, 122, 204, 0.3)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.background = "#007acc";
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "none";
+                (e.target as HTMLElement).style.background = "#007acc";
+                (e.target as HTMLElement).style.transform = "translateY(0)";
+                (e.target as HTMLElement).style.boxShadow = "none";
               }}
               >
                 Create Training
