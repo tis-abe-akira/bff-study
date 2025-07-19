@@ -1,5 +1,16 @@
 # Keycloak Setup Guide
 
+## Native Windowsでの利用
+
+バイナリをインストールしている前提で、以下のコマンドで実行する。
+
+```cmd
+cd <KEYCLOAK/bin>
+kc.bat start-dev --http-port=8180
+```
+
+## Keycloakのセットアップ手順
+
 新しい`realm`と`クライアント`を作成するための手順を以下に示します。
 
   ---
