@@ -78,30 +78,34 @@ Frontend (3000) → FastAPI BFF (8080) → API Gateway (8082) → Backend (8081)
 
 ## 詳細TODO-List
 
-### Phase 1: APIGateway機能の分離
+### Phase 1: APIGateway機能の分離 ✅ **完了**
 
-#### 1.1 新しいAPI Gatewayプロジェクトの作成
-- [ ] `api-gateway`ディレクトリを作成
-- [ ] SpringBootプロジェクトの初期化
-- [ ] 必要な依存関係を追加（Web, WebClient等）
-- [ ] `application.yml`でポート8082を設定
+#### 1.1 新しいAPI Gatewayプロジェクトの作成 ✅
+- [x] `api-gateway`ディレクトリを作成
+- [x] SpringBootプロジェクトの初期化
+- [x] 必要な依存関係を追加（Web, WebClient等）
+- [x] `application.yml`でポート8082を設定
 
-#### 1.2 現在のBFFからAPIGateway機能を移行
-- [ ] `bff/src/main/java/com/example/bff/controller/ApiGatewayController.java`を分析
-- [ ] API Gateway専用の新しいControllerを作成
-- [ ] プロキシ機能の実装（Backend APIへの転送）
-- [ ] ヘッダー転送機能（`X-User-ID`等）の実装
+#### 1.2 現在のBFFからAPIGateway機能を移行 ✅
+- [x] `bff/src/main/java/com/example/bff/controller/ApiGatewayController.java`を分析
+- [x] API Gateway専用の新しいControllerを作成（ProxyController）
+- [x] プロキシ機能の実装（Backend APIへの転送）
+- [x] ヘッダー転送機能（`X-User-ID`等）の実装
+- [x] **パス修正**: `/api/training-plans` → `/api/trainings` でフロントエンドと統一
 
-#### 1.3 BFFの修正
-- [ ] BFFからAPIGateway機能を削除
-- [ ] BFFがAPI Gateway（8082）を呼び出すように修正
-- [ ] 設定ファイルでAPI Gatewayのエンドポイントを定義
+#### 1.3 BFFの修正 ✅
+- [x] BFFからAPIGateway機能を削除（旧ApiGatewayController削除）
+- [x] BFFがAPI Gateway（8082）を呼び出すように修正（TrainingApiController作成）
+- [x] 設定ファイルでAPI Gatewayのエンドポイントを定義
+- [x] **重複コントローラー対応**: 旧TrainingControllerをバックアップ化
 
-#### 1.4 動作確認
-- [ ] 各サービスの起動順序確認（KeyCloak → Backend → API Gateway → BFF → Frontend）
-- [ ] Frontend → BFF → API Gateway → Backend の通信フローテスト
-- [ ] 認証フローの動作確認
-- [ ] エラーハンドリングの確認
+#### 1.4 動作確認 ✅
+- [x] 各サービスの起動順序確認（KeyCloak → Backend → API Gateway → BFF → Frontend）
+- [x] Frontend → BFF → API Gateway → Backend の通信フローテスト
+- [x] 認証フローの動作確認
+- [x] エラーハンドリングの確認
+
+**🎉 Phase 1完了！新しいアーキテクチャ**: `Frontend (3000) → BFF (8080) → API Gateway (8082) → Backend (8081)`
 
 ---
 
