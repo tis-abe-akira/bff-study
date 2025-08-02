@@ -9,14 +9,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @RequestMapping("/api")
-public class ApiGatewayController {
+public class TrainingApiController {
 
-    @Value("${backend.url}")
-    private String backendUrl;
+    @Value("${api-gateway.url}")
+    private String apiGatewayUrl;
 
     private final WebClient webClient;
 
-    public ApiGatewayController() {
+    public TrainingApiController() {
         this.webClient = WebClient.builder().build();
     }
 
@@ -25,7 +25,7 @@ public class ApiGatewayController {
         String userId = principal.getAttribute("sub");
         
         return webClient.get()
-            .uri(backendUrl + "/api/training-plans")
+            .uri(apiGatewayUrl + "/api/training-plans")
             .header("X-User-ID", userId)
             .retrieve()
             .toEntity(Object.class)
@@ -38,7 +38,7 @@ public class ApiGatewayController {
         String userId = principal.getAttribute("sub");
         
         return webClient.post()
-            .uri(backendUrl + "/api/training-plans")
+            .uri(apiGatewayUrl + "/api/training-plans")
             .header("X-User-ID", userId)
             .bodyValue(trainingPlan)
             .retrieve()
@@ -52,7 +52,7 @@ public class ApiGatewayController {
         String userId = principal.getAttribute("sub");
         
         return webClient.get()
-            .uri(backendUrl + "/api/training-plans/" + id)
+            .uri(apiGatewayUrl + "/api/training-plans/" + id)
             .header("X-User-ID", userId)
             .retrieve()
             .toEntity(Object.class)
@@ -66,7 +66,7 @@ public class ApiGatewayController {
         String userId = principal.getAttribute("sub");
         
         return webClient.put()
-            .uri(backendUrl + "/api/training-plans/" + id)
+            .uri(apiGatewayUrl + "/api/training-plans/" + id)
             .header("X-User-ID", userId)
             .bodyValue(trainingPlan)
             .retrieve()
@@ -80,7 +80,7 @@ public class ApiGatewayController {
         String userId = principal.getAttribute("sub");
         
         return webClient.delete()
-            .uri(backendUrl + "/api/training-plans/" + id)
+            .uri(apiGatewayUrl + "/api/training-plans/" + id)
             .header("X-User-ID", userId)
             .retrieve()
             .toEntity(Object.class)

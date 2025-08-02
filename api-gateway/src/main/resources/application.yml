@@ -1,0 +1,16 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: training-api-gateway
+
+# Backend API の設定
+backend:
+  url: http://localhost:8081
+
+# ログ設定
+logging:
+  level:
+    com.example.apigateway: DEBUG
+    org.springframework.web: DEBUG
