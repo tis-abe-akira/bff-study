@@ -20,68 +20,101 @@ public class TrainingApiController {
         this.webClient = WebClient.builder().build();
     }
 
-    @GetMapping("/training-plans")
-    public ResponseEntity<?> getTrainingPlans(@AuthenticationPrincipal OAuth2User principal) {
+    @GetMapping("/trainings")
+    public ResponseEntity<?> getTrainings(@AuthenticationPrincipal OAuth2User principal,
+                                         @RequestParam(required = false) String type,
+                                         @RequestParam(required = false) String difficulty,
+                                         @RequestParam(required = false) String search,
+                                         @RequestParam(required = false) Integer minDuration,
+                                         @RequestParam(required = false) Integer maxDuration) {
         String userId = principal.getAttribute("sub");
         
+        // Query parameters construction
+        StringBuilder queryParams = new StringBuilder();
+        if (type != null) queryParams.append("&type=").append(type);
+        if (difficulty != null) queryParams.append("&difficulty=").append(difficulty);
+        if (search != null) queryParams.append("&search=").append(search);
+        if (minDuration != null) queryParams.append("&minDuration=").append(minDuration);
+        if (maxDuration != null) queryParams.append("&maxDuration=").append(maxDuration);
+        
+        String query = queryParams.length() > 0 ? "?" + queryParams.substring(1) : "";
+        
         return webClient.get()
-            .uri(apiGatewayUrl + "/api/training-plans")
+            .uri(apiGatewayUrl + "/api/trainings" + query)
             .header("X-User-ID", userId)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @PostMapping("/training-plans")
-    public ResponseEntity<?> createTrainingPlan(@AuthenticationPrincipal OAuth2User principal,
-                                               @RequestBody Object trainingPlan) {
+    @PostMapping("/trainings")
+    public ResponseEntity<?> createTraining(@AuthenticationPrincipal OAuth2User principal,
+                                           @RequestBody Object training) {
         String userId = principal.getAttribute("sub");
         
         return webClient.post()
-            .uri(apiGatewayUrl + "/api/training-plans")
+            .uri(apiGatewayUrl + "/api/trainings")
             .header("X-User-ID", userId)
-            .bodyValue(trainingPlan)
+            .bodyValue(training)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @GetMapping("/training-plans/{id}")
-    public ResponseEntity<?> getTrainingPlan(@AuthenticationPrincipal OAuth2User principal,
-                                            @PathVariable String id) {
+    @GetMapping("/trainings/{id}")
+    public ResponseEntity<?> getTraining(@AuthenticationPrincipal OAuth2User principal,
+                                        @PathVariable String id) {
         String userId = principal.getAttribute("sub");
         
         return webClient.get()
-            .uri(apiGatewayUrl + "/api/training-plans/" + id)
+            .uri(apiGatewayUrl + "/api/trainings/" + id)
             .header("X-User-ID", userId)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @PutMapping("/training-plans/{id}")
-    public ResponseEntity<?> updateTrainingPlan(@AuthenticationPrincipal OAuth2User principal,
-                                               @PathVariable String id,
-                                               @RequestBody Object trainingPlan) {
+    @PutMapping("/trainings/{id}")
+    public ResponseEntity<?> updateTraining(@AuthenticationPrincipal OAuth2User principal,
+                                           @PathVariable String id,
+                                           @RequestBody Object training) {
         String userId = principal.getAttribute("sub");
         
         return webClient.put()
-            .uri(apiGatewayUrl + "/api/training-plans/" + id)
+            .uri(apiGatewayUrl + "/api/trainings/" + id)
             .header("X-User-ID", userId)
-            .bodyValue(trainingPlan)
+            .bodyValue(training)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @DeleteMapping("/training-plans/{id}")
-    public ResponseEntity<?> deleteTrainingPlan(@AuthenticationPrincipal OAuth2User principal,
-                                               @PathVariable String id) {
+    @DeleteMapping("/trainings/{id}")
+    public ResponseEntity<?> deleteTraining(@AuthenticationPrincipal OAuth2User principal,
+                                           @PathVariable String id) {
         String userId = principal.getAttribute("sub");
         
         return webClient.delete()
-            .uri(apiGatewayUrl + "/api/training-plans/" + id)
+            .uri(apiGatewayUrl + "/api/trainings/" + id)
             .header("X-User-ID", userId)
+            .retrieve()
+            .toEntity(Object.class)
+            .block();
+    }
+
+    @GetMapping("/trainings/types")
+    public ResponseEntity<?> getTrainingTypes(@AuthenticationPrincipal OAuth2User principal) {
+        return webClient.get()
+            .uri(apiGatewayUrl + "/api/trainings/types")
+            .retrieve()
+            .toEntity(Object.class)
+            .block();
+    }
+
+    @GetMapping("/trainings/difficulties")
+    public ResponseEntity<?> getDifficulties(@AuthenticationPrincipal OAuth2User principal) {
+        return webClient.get()
+            .uri(apiGatewayUrl + "/api/trainings/difficulties")
             .retrieve()
             .toEntity(Object.class)
             .block();

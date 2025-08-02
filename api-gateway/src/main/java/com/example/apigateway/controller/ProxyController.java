@@ -18,58 +18,92 @@ public class ProxyController {
         this.webClient = WebClient.builder().build();
     }
 
-    @GetMapping("/training-plans")
-    public ResponseEntity<?> getTrainingPlans(@RequestHeader("X-User-ID") String userId) {
+    @GetMapping("/trainings")
+    public ResponseEntity<?> getTrainings(@RequestHeader("X-User-ID") String userId,
+                                         @RequestParam(required = false) String type,
+                                         @RequestParam(required = false) String difficulty,
+                                         @RequestParam(required = false) String search,
+                                         @RequestParam(required = false) Integer minDuration,
+                                         @RequestParam(required = false) Integer maxDuration) {
+        
+        // Query parameters construction
+        StringBuilder queryParams = new StringBuilder();
+        if (type != null) queryParams.append("&type=").append(type);
+        if (difficulty != null) queryParams.append("&difficulty=").append(difficulty);
+        if (search != null) queryParams.append("&search=").append(search);
+        if (minDuration != null) queryParams.append("&minDuration=").append(minDuration);
+        if (maxDuration != null) queryParams.append("&maxDuration=").append(maxDuration);
+        
+        String query = queryParams.length() > 0 ? "?" + queryParams.substring(1) : "";
+        
         return webClient.get()
-            .uri(backendUrl + "/api/training-plans")
+            .uri(backendUrl + "/api/trainings" + query)
             .header("X-User-ID", userId)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @PostMapping("/training-plans")
-    public ResponseEntity<?> createTrainingPlan(@RequestHeader("X-User-ID") String userId,
-                                               @RequestBody Object trainingPlan) {
+    @PostMapping("/trainings")
+    public ResponseEntity<?> createTraining(@RequestHeader("X-User-ID") String userId,
+                                           @RequestBody Object training) {
         return webClient.post()
-            .uri(backendUrl + "/api/training-plans")
+            .uri(backendUrl + "/api/trainings")
             .header("X-User-ID", userId)
-            .bodyValue(trainingPlan)
+            .bodyValue(training)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @GetMapping("/training-plans/{id}")
-    public ResponseEntity<?> getTrainingPlan(@RequestHeader("X-User-ID") String userId,
-                                            @PathVariable String id) {
+    @GetMapping("/trainings/{id}")
+    public ResponseEntity<?> getTraining(@RequestHeader("X-User-ID") String userId,
+                                        @PathVariable String id) {
         return webClient.get()
-            .uri(backendUrl + "/api/training-plans/" + id)
+            .uri(backendUrl + "/api/trainings/" + id)
             .header("X-User-ID", userId)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @PutMapping("/training-plans/{id}")
-    public ResponseEntity<?> updateTrainingPlan(@RequestHeader("X-User-ID") String userId,
-                                               @PathVariable String id,
-                                               @RequestBody Object trainingPlan) {
+    @PutMapping("/trainings/{id}")
+    public ResponseEntity<?> updateTraining(@RequestHeader("X-User-ID") String userId,
+                                           @PathVariable String id,
+                                           @RequestBody Object training) {
         return webClient.put()
-            .uri(backendUrl + "/api/training-plans/" + id)
+            .uri(backendUrl + "/api/trainings/" + id)
             .header("X-User-ID", userId)
-            .bodyValue(trainingPlan)
+            .bodyValue(training)
             .retrieve()
             .toEntity(Object.class)
             .block();
     }
 
-    @DeleteMapping("/training-plans/{id}")
-    public ResponseEntity<?> deleteTrainingPlan(@RequestHeader("X-User-ID") String userId,
-                                               @PathVariable String id) {
+    @DeleteMapping("/trainings/{id}")
+    public ResponseEntity<?> deleteTraining(@RequestHeader("X-User-ID") String userId,
+                                           @PathVariable String id) {
         return webClient.delete()
-            .uri(backendUrl + "/api/training-plans/" + id)
+            .uri(backendUrl + "/api/trainings/" + id)
             .header("X-User-ID", userId)
+            .retrieve()
+            .toEntity(Object.class)
+            .block();
+    }
+
+    @GetMapping("/trainings/types")
+    public ResponseEntity<?> getTrainingTypes() {
+        return webClient.get()
+            .uri(backendUrl + "/api/trainings/types")
+            .retrieve()
+            .toEntity(Object.class)
+            .block();
+    }
+
+    @GetMapping("/trainings/difficulties")
+    public ResponseEntity<?> getDifficulties() {
+        return webClient.get()
+            .uri(backendUrl + "/api/trainings/difficulties")
             .retrieve()
             .toEntity(Object.class)
             .block();
