@@ -13,8 +13,8 @@ import java.util.Map;
 @RequestMapping("/api/trainings")
 public class TrainingController {
 
-    @Value("${backend.url}")
-    private String backendUrl;
+    @Value("${api-gateway.url}")
+    private String apiGatewayUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -49,7 +49,7 @@ public class TrainingController {
 
         try {
             ResponseEntity<Object> response = restTemplate.exchange(
-                backendUrl + "/api/trainings" + query,
+                apiGatewayUrl + "/api/training-plans" + query,
                 HttpMethod.GET,
                 entity,
                 Object.class
@@ -78,7 +78,7 @@ public class TrainingController {
 
         try {
             ResponseEntity<Object> response = restTemplate.exchange(
-                backendUrl + "/api/trainings/" + id,
+                apiGatewayUrl + "/api/training-plans/" + id,
                 HttpMethod.GET,
                 entity,
                 Object.class
@@ -108,7 +108,7 @@ public class TrainingController {
 
         try {
             ResponseEntity<Object> response = restTemplate.exchange(
-                backendUrl + "/api/trainings",
+                apiGatewayUrl + "/api/training-plans",
                 HttpMethod.POST,
                 entity,
                 Object.class
@@ -139,7 +139,7 @@ public class TrainingController {
 
         try {
             ResponseEntity<Object> response = restTemplate.exchange(
-                backendUrl + "/api/trainings/" + id,
+                apiGatewayUrl + "/api/training-plans/" + id,
                 HttpMethod.PUT,
                 entity,
                 Object.class
@@ -168,7 +168,7 @@ public class TrainingController {
 
         try {
             ResponseEntity<Object> response = restTemplate.exchange(
-                backendUrl + "/api/trainings/" + id,
+                apiGatewayUrl + "/api/training-plans/" + id,
                 HttpMethod.DELETE,
                 entity,
                 Object.class
@@ -188,7 +188,7 @@ public class TrainingController {
 
         try {
             ResponseEntity<Object> response = restTemplate.getForEntity(
-                backendUrl + "/api/trainings/types",
+                apiGatewayUrl + "/api/training-plans/types",
                 Object.class
             );
             return response;
@@ -206,7 +206,7 @@ public class TrainingController {
 
         try {
             ResponseEntity<Object> response = restTemplate.getForEntity(
-                backendUrl + "/api/trainings/difficulties",
+                apiGatewayUrl + "/api/training-plans/difficulties",
                 Object.class
             );
             return response;
