@@ -1,0 +1,79 @@
+# Lambda環境用設定
+spring:
+  profiles:
+    active: lambda
+  application:
+    name: bff-lambda
+  
+  # Redis Session設定
+  redis:
+    host: ${REDIS_ENDPOINT:localhost}
+    port: ${REDIS_PORT:6379}
+    timeout: 2000ms
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+  
+  # セッション設定
+  session:
+    store-type: redis
+    timeout: 30m
+    redis:
+      namespace: bff:session
+
+# Logging設定（CloudWatch用）
+logging:
+  level:
+    com.example.bff: DEBUG
+    org.springframework.cloud.function: DEBUG
+    org.springframework.session: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Lambda検証用設定
+bff:
+  lambda:
+    mock-auth:
+      enabled: true
+      default-user: test-user
+    backend:
+      url: ${BACKEND_URL:http://localhost:8081}
+    api-gateway:
+      url: ${API_GATEWAY_URL:http://localhost:8082}
+
+---
+# 本番環境用設定
+spring:
+  config:
+    activate:
+      on-profile: aws
+  redis:
+    host: ${REDIS_ENDPOINT}
+    port: ${REDIS_PORT:6379}
+
+logging:
+  level:
+    root: INFO
+    com.example.bff: INFO
+
+bff:
+  lambda:
+    mock-auth:
+      enabled: false
+
+---
+# ローカル開発用設定
+spring:
+  config:
+    activate:
+      on-profile: local
+  redis:
+    host: localhost
+    port: 6379
+
+logging:
+  level:
+    root: DEBUG
+    com.example.bff: DEBUG

@@ -1,0 +1,31 @@
+{
+  "name": "bff-study-infrastructure",
+  "version": "1.0.0",
+  "description": "AWS CDK Infrastructure for BFF Study Project",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy": "cdk deploy --all",
+    "destroy": "cdk destroy --all",
+    "diff": "cdk diff",
+    "synth": "cdk synth"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "~5.0.0",
+    "aws-cdk": "^2.100.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.100.0",
+    "constructs": "^10.3.0"
+  },
+  "keywords": ["aws-cdk", "infrastructure", "bff", "microservices"],
+  "author": "Development Team",
+  "license": "MIT"
+}
