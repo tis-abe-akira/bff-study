@@ -4,6 +4,9 @@ spring:
     active: lambda
   application:
     name: bff-lambda
+  cloud:
+    function:
+      definition: bffProxy
   
   # Redis Session設定
   redis:
@@ -69,6 +72,9 @@ spring:
   config:
     activate:
       on-profile: local
+  cloud:
+    function:
+      definition: '' # Disable function mapping for local profile to use LocalTestController
   redis:
     host: localhost
     port: 6379
