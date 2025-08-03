@@ -3,7 +3,7 @@ package com.example.bff.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,7 +20,7 @@ public class TrainingController {
 
     @GetMapping
     public ResponseEntity<?> getAllTrainings(
-            @AuthenticationPrincipal OAuth2User principal,
+            @AuthenticationPrincipal OidcUser principal,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String difficulty,
             @RequestParam(required = false) String search,
@@ -31,7 +31,8 @@ public class TrainingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userId = principal.getAttribute("sub");
+        // JWTトークンを取得
+        String idToken = principal.getIdToken().getTokenValue();
         
         // Query parameters construction
         StringBuilder queryParams = new StringBuilder();
@@ -44,7 +45,7 @@ public class TrainingController {
         String query = queryParams.length() > 0 ? "?" + queryParams.substring(1) : "";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-ID", userId);
+        headers.set("Authorization", "Bearer " + idToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
@@ -63,17 +64,17 @@ public class TrainingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTrainingById(
-            @AuthenticationPrincipal OAuth2User principal,
+            @AuthenticationPrincipal OidcUser principal,
             @PathVariable Long id) {
         
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userId = principal.getAttribute("sub");
+        String idToken = principal.getIdToken().getTokenValue();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-ID", userId);
+        headers.set("Authorization", "Bearer " + idToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
@@ -92,17 +93,17 @@ public class TrainingController {
 
     @PostMapping
     public ResponseEntity<?> createTraining(
-            @AuthenticationPrincipal OAuth2User principal,
+            @AuthenticationPrincipal OidcUser principal,
             @RequestBody Map<String, Object> training) {
         
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userId = principal.getAttribute("sub");
+        String idToken = principal.getIdToken().getTokenValue();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-ID", userId);
+        headers.set("Authorization", "Bearer " + idToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(training, headers);
 
@@ -122,7 +123,7 @@ public class TrainingController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTraining(
-            @AuthenticationPrincipal OAuth2User principal,
+            @AuthenticationPrincipal OidcUser principal,
             @PathVariable Long id,
             @RequestBody Map<String, Object> training) {
         
@@ -130,10 +131,10 @@ public class TrainingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userId = principal.getAttribute("sub");
+        String idToken = principal.getIdToken().getTokenValue();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-ID", userId);
+        headers.set("Authorization", "Bearer " + idToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(training, headers);
 
@@ -153,17 +154,17 @@ public class TrainingController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTraining(
-            @AuthenticationPrincipal OAuth2User principal,
+            @AuthenticationPrincipal OidcUser principal,
             @PathVariable Long id) {
         
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String userId = principal.getAttribute("sub");
+        String idToken = principal.getIdToken().getTokenValue();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-ID", userId);
+        headers.set("Authorization", "Bearer " + idToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
@@ -181,14 +182,22 @@ public class TrainingController {
     }
 
     @GetMapping("/types")
-    public ResponseEntity<?> getTrainingTypes(@AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<?> getTrainingTypes(@AuthenticationPrincipal OidcUser principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        String idToken = principal.getIdToken().getTokenValue();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + idToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
         try {
-            ResponseEntity<Object> response = restTemplate.getForEntity(
+            ResponseEntity<Object> response = restTemplate.exchange(
                 apiGatewayUrl + "/api/training-plans/types",
+                HttpMethod.GET,
+                entity,
                 Object.class
             );
             return response;
@@ -199,14 +208,22 @@ public class TrainingController {
     }
 
     @GetMapping("/difficulties")
-    public ResponseEntity<?> getDifficulties(@AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<?> getDifficulties(@AuthenticationPrincipal OidcUser principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        String idToken = principal.getIdToken().getTokenValue();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + idToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
         try {
-            ResponseEntity<Object> response = restTemplate.getForEntity(
+            ResponseEntity<Object> response = restTemplate.exchange(
                 apiGatewayUrl + "/api/training-plans/difficulties",
+                HttpMethod.GET,
+                entity,
                 Object.class
             );
             return response;
