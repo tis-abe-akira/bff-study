@@ -1,0 +1,11 @@
+server:
+  port: 8082
+
+# Backend API Configuration
+backend:
+  url: http://localhost:8081
+
+logging:
+  level:
+    com.example.apigateway: DEBUG
+    org.springframework.web: DEBUG

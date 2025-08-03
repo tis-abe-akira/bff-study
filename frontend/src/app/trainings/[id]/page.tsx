@@ -45,7 +45,7 @@ export default function TrainingDetailPage() {
   const fetchTraining = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/trainings/${params.id}`, {
+      const response = await fetch(`http://localhost:8080/api/proxy/trainings/${params.id}`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export default function TrainingDetailPage() {
     if (!confirm('Are you sure you want to delete this training?')) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/trainings/${params.id}`, {
+      const response = await fetch(`http://localhost:8080/api/proxy/trainings/${params.id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -113,7 +113,7 @@ export default function TrainingDetailPage() {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/trainings/${params.id}`, {
+      const response = await fetch(`http://localhost:8080/api/proxy/trainings/${params.id}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
