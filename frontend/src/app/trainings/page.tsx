@@ -40,7 +40,7 @@ export default function TrainingsPage() {
       if (selectedType) params.append('type', selectedType);
       if (selectedDifficulty) params.append('difficulty', selectedDifficulty);
 
-      const response = await fetch(`http://localhost:8080/api/trainings?${params}`, {
+      const response = await fetch(`http://localhost:8080/api/proxy/trainings?${params}`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',

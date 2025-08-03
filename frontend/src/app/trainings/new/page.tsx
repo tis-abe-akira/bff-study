@@ -77,7 +77,7 @@ export default function NewTrainingPage() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/api/trainings', {
+      const response = await fetch('http://localhost:8080/api/proxy/trainings', {
         method: 'POST',
         credentials: 'include',
         headers: {

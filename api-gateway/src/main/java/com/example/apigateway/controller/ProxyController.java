@@ -18,7 +18,7 @@ public class ProxyController {
         this.webClient = WebClient.builder().build();
     }
 
-    @GetMapping("/training-plans")
+    @GetMapping("/trainings")
     public ResponseEntity<?> getTrainingPlans(@RequestHeader(value = "Authorization", required = true) String authorization,
                                              @RequestParam(required = false) String type,
                                              @RequestParam(required = false) String difficulty,
@@ -43,7 +43,7 @@ public class ProxyController {
             .block();
     }
 
-    @PostMapping("/training-plans")
+    @PostMapping("/trainings")
     public ResponseEntity<?> createTrainingPlan(@RequestHeader(value = "Authorization", required = true) String authorization,
                                                @RequestBody Object trainingPlan) {
         return webClient.post()
@@ -55,7 +55,7 @@ public class ProxyController {
             .block();
     }
 
-    @GetMapping("/training-plans/{id}")
+    @GetMapping("/trainings/{id}")
     public ResponseEntity<?> getTrainingPlan(@RequestHeader(value = "Authorization", required = true) String authorization,
                                             @PathVariable String id) {
         return webClient.get()
@@ -66,7 +66,7 @@ public class ProxyController {
             .block();
     }
 
-    @PutMapping("/training-plans/{id}")
+    @PutMapping("/trainings/{id}")
     public ResponseEntity<?> updateTrainingPlan(@RequestHeader(value = "Authorization", required = true) String authorization,
                                                @PathVariable String id,
                                                @RequestBody Object trainingPlan) {
@@ -79,7 +79,7 @@ public class ProxyController {
             .block();
     }
 
-    @DeleteMapping("/training-plans/{id}")
+    @DeleteMapping("/trainings/{id}")
     public ResponseEntity<?> deleteTrainingPlan(@RequestHeader(value = "Authorization", required = true) String authorization,
                                                @PathVariable String id) {
         return webClient.delete()
@@ -90,7 +90,7 @@ public class ProxyController {
             .block();
     }
 
-    @GetMapping("/training-plans/types")
+    @GetMapping("/trainings/types")
     public ResponseEntity<?> getTrainingTypes(@RequestHeader(value = "Authorization", required = true) String authorization) {
         return webClient.get()
             .uri(backendUrl + "/api/trainings/types")
@@ -100,7 +100,7 @@ public class ProxyController {
             .block();
     }
 
-    @GetMapping("/training-plans/difficulties")
+    @GetMapping("/trainings/difficulties")
     public ResponseEntity<?> getTrainingDifficulties(@RequestHeader(value = "Authorization", required = true) String authorization) {
         return webClient.get()
             .uri(backendUrl + "/api/trainings/difficulties")
