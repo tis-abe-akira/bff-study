@@ -1,19 +1,5 @@
-# Multi-stage build for Spring Boot BFF
-FROM maven:3.9.4-eclipse-temurin-17 AS builder
-
-# Set working directory
-WORKDIR /app
-
-# Copy pom.xml and download dependencies (for caching)
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Copy source code and build
-COPY src ./src
-RUN mvn clean package -DskipTests=true -B
-
-# Runtime stage with smaller JRE image
-FROM eclipse-temurin:17-jre-alpine
+# Runtime stage with Amazon Corretto JRE  
+FROM amazoncorretto:17-alpine
 
 # Add curl for health checks
 RUN apk add --no-cache curl
@@ -25,8 +11,8 @@ RUN addgroup -g 1001 -S spring && \
 # Set working directory
 WORKDIR /app
 
-# Copy the built jar from builder stage
-COPY --from=builder /app/target/training-bff-*.jar app.jar
+# Copy the pre-built jar from target directory
+COPY target/training-bff-*.jar app.jar
 
 # Change ownership to spring user
 RUN chown spring:spring app.jar
