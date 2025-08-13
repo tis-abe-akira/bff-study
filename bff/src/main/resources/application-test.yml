@@ -1,0 +1,33 @@
+# テスト用の最小設定
+server:
+  port: 8080
+
+# OAuth2設定を無効化
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientRegistrationRepositoryAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.server.OAuth2ResourceServerAutoConfiguration
+  
+  # セキュリティを最小限に
+  security:
+    user:
+      name: user
+      password: password
+
+# Actuator設定
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+# ログ設定
+logging:
+  level:
+    root: INFO
+    com.example.bff: DEBUG
