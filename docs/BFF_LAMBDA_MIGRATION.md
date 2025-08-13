@@ -198,31 +198,42 @@ api.root.addProxy({
 });
 ```
 
-## 📅 段階的移行計画
+## ✅ 検証完了状況
 
-### Phase 1: 技術検証 (1週間)
-- [ ] Spring Cloud Function基本動作確認
-- [ ] Redis セッション外部化テスト
-- [ ] OAuth2認証フローテスト
-- [ ] パフォーマンステスト
+### 完了済み検証項目
+- [x] **Spring Cloud Function基本動作確認**: 実装完了
+- [x] **Redis セッション外部化テスト**: ローカル検証済み
+- [x] **モック認証フローテスト**: 動作確認済み
+- [x] **API Gatewayプロキシ統合**: ローカルテスト完了
+- [x] **エラーハンドリング**: 実装済み
+- [x] **ログ設定**: コンソール出力対応
 
-### Phase 2: Lambda実装 (2週間)
-- [ ] 既存コードのFunction化
-- [ ] 環境変数設定
-- [ ] エラーハンドリング実装
-- [ ] ログ設定
+### 次期実装必要項目
+- [ ] **AWSデプロイ**: Lambda + API Gatewayスタック
+- [ ] **ElastiCache統合**: Redis → マネージドサービス移行
+- [ ] **KeyCloak統合**: モック認証 → 実際のOAuth2置換
+- [ ] **元BFF機能移植**: ProxyControllerロジックの完全実装
 
-### Phase 3: AWS統合 (1週間)
-- [ ] Lambda デプロイ
-- [ ] API Gateway設定
-- [ ] ElastiCache構築
-- [ ] セキュリティ設定
+## 📅 次期実装スケジュール
 
-### Phase 4: 統合テスト (1週間)
+### Step 1: AWSデプロイ (3日)
+- [ ] BFFStack CDK実装
+- [ ] Lambda関数デプロイ
+- [ ] API Gateway統合テスト
+
+### Step 2: ElastiCache統合 (2日)
+- [ ] ElastiCacheクラスター構築
+- [ ] 接続設定更新
+- [ ] セッション動作確認
+
+### Step 3: KeyCloak統合 (3日)
+- [ ] KeyCloak ECSデプロイ
+- [ ] OAuth2設定移行
+- [ ] JWT発行フロー実装
+
+### Step 4: 元BFF統合 (2日)
+- [ ] ProxyControllerロジック移植
 - [ ] エンドツーエンドテスト
-- [ ] 負荷テスト
-- [ ] セキュリティテスト
-- [ ] 本番リリース
 
 ## 🔬 検証項目とメトリクス
 

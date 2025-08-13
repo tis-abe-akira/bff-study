@@ -1,0 +1,80 @@
+# AWS ECS/Fargate環境用設定
+server:
+  port: 8080
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true  # HTTPS環境では true
+        same-site: lax
+
+spring:
+  # Redis Session Store Configuration
+  session:
+    store-type: redis
+    redis:
+      namespace: bff-study:session
+      flush-mode: on_save
+      save-mode: on_set_attribute
+    timeout: 1800  # 30分
+
+  # Redis Configuration
+  data:
+    redis:
+      host: ${REDIS_ENDPOINT:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+      connect-timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
+          max-wait: -1ms
+        shutdown-timeout: 200ms
+
+  # OAuth2 Configuration (環境変数で設定)
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${KEYCLOAK_CLIENT_ID:training-app}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:1pOnITK5i3gLb30RTkU2tw8j8SGPiPdG}
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: ${KEYCLOAK_REDIRECT_URI:http://localhost:8080/login/oauth2/code/keycloak}
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_URL:http://localhost:8180}/realms/training-app
+
+# API Gateway Configuration (環境変数で設定)
+api-gateway:
+  url: ${API_GATEWAY_URL:http://localhost:8082}
+
+# Actuator Configuration for ECS Health Checks
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: always
+  health:
+    redis:
+      enabled: true
+
+# Logging Configuration for CloudWatch
+logging:
+  level:
+    root: INFO
+    com.example.bff: DEBUG
+    org.springframework.security: WARN
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.session: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"

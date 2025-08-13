@@ -4,7 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import { NetworkStack } from '../lib/network-stack';
 // import { AuthStack } from '../lib/auth-stack';
 // import { BackendStack } from '../lib/backend-stack';
-// import { BffStack } from '../lib/bff-stack';
+import { BffEcsStack } from '../lib/bff-ecs-stack';
 // import { FrontendStack } from '../lib/frontend-stack';
 
 const app = new cdk.App();
@@ -47,26 +47,26 @@ const networkStack = new NetworkStack(app, 'BffStudyNetworkStack', {
 //   keycloakUrl: authStack.keycloakUrl
 // });
 
-// BFFサービス (Lambda)
-// const bffStack = new BffStack(app, 'BffStudyBffStack', {
-//   env,
-//   tags: commonTags,
-//   description: 'BFF service on Lambda with API Gateway',
-//   vpc: networkStack.vpc,
-//   keycloakUrl: authStack.keycloakUrl,
-//   backendUrl: backendStack.backendUrl
-// });
+// BFFサービス (ECS/Fargate) - Lambda から移行
+const bffEcsStack = new BffEcsStack(app, 'BffStudyEcsStack', {
+  env,
+  tags: commonTags,
+  description: 'BFF service on ECS/Fargate with ALB - Migrated from Lambda',
+  vpc: networkStack.vpc,
+  keycloakUrl: 'http://localhost:8180', // 暫定的にローカルKeyCloakを指定
+  backendUrl: 'http://localhost:8081'   // 暫定的にローカルBackendを指定
+});
 
 // フロントエンドサービス (Amplify)
 // const frontendStack = new FrontendStack(app, 'BffStudyFrontendStack', {
 //   env,
 //   tags: commonTags,
 //   description: 'Frontend service on Amplify',
-//   bffApiUrl: bffStack.apiUrl
+//   bffApiUrl: `http://${bffEcsStack.alb.loadBalancerDnsName}`
 // });
 
 // スタック間依存関係
 // authStack.addDependency(networkStack);
 // backendStack.addDependency(authStack);
-// bffStack.addDependency(backendStack);
-// frontendStack.addDependency(bffStack);
+bffEcsStack.addDependency(networkStack);
+// frontendStack.addDependency(bffEcsStack);

@@ -3,7 +3,7 @@
 ## 🚀 プロジェクト概要
 
 このドキュメントは、現在のローカル開発環境からAWSクラウド環境への段階的移行を定義します。
-特に**BFFのLambda化**を重点的に検証し、スパイク耐性のあるマイクロサービスアーキテクチャを構築します。
+特に**BFFのECS/Fargate化**を重点的に実装し、コンテナベースのマイクロサービスアーキテクチャを構築します。
 
 ## 📋 アーキテクチャ移行マップ
 
@@ -18,9 +18,9 @@ Frontend (Next.js:3000) ←→ BFF (SpringBoot:8080) ←→ API Gateway (SpringB
 
 ### AWS移行後の構成
 ```
-Frontend (Amplify) ←→ BFF (Lambda) ←→ AWS API Gateway ←→ Backend (ECS Fargate)
-                             ↑              ↑
-                      ElastiCache Redis   JWT Authorizer
+Frontend (Amplify) ←→ BFF (ECS/Fargate) ←→ API Gateway (8082) ←→ Backend (ECS Fargate)
+                             ↑                    ↑
+                      ALB + ElastiCache Redis   JWT認証/プロキシ
                              ↓
                     KeyCloak (App Runner)
 ```
@@ -30,7 +30,7 @@ Frontend (Amplify) ←→ BFF (Lambda) ←→ AWS API Gateway ←→ Backend (EC
 | コンポーネント | 現在 | AWS移行後 | 理由 |
 |---|---|---|---|
 | **Frontend** | Next.js (port 3000) | **Amplify** | 楽なデプロイ、CI/CD標準対応 |
-| **BFF** | SpringBoot (port 8080) | **Lambda + Spring Cloud Function** | スパイク耐性、コスト効率 |
+| **BFF** | SpringBoot (port 8080) | **ECS/Fargate + ALB** | 予測可能なコスト、運用の簡素化 |
 | **API Gateway** | SpringBoot (port 8082) | **AWS API Gateway** | マネージドサービス、JWT Authorizer |
 | **Backend** | SpringBoot (port 8081) | **ECS Fargate + RDS Aurora** | マイクロサービス独立性 |
 | **Auth** | KeyCloak (port 8180) | **App Runner + RDS PostgreSQL** | 楽なコンテナデプロイ |
@@ -47,17 +47,17 @@ bff-study/
 │   │   │   ├── network-stack.ts       # VPC、サブネット
 │   │   │   ├── auth-stack.ts          # KeyCloak App Runner
 │   │   │   ├── backend-stack.ts       # ECS Fargate
-│   │   │   ├── bff-stack.ts           # Lambda + API Gateway
+│   │   │   ├── bff-ecs-stack.ts       # ECS/Fargate + ALB
 │   │   │   └── frontend-stack.ts      # Amplify
 │   │   ├── bin/                # CDK App
 │   │   ├── environments/       # 環境別設定
 │   │   └── package.json        # CDK依存関係
 │   └── docker/                 # Docker設定
 ├── services/                   # アプリケーション
-│   ├── bff-lambda/            # Lambda対応BFF
-│   │   ├── src/               # Spring Cloud Function
-│   │   ├── pom.xml            # Lambda依存関係
-│   │   └── serverless.yml     # SAM設定(オプション)
+│   ├── bff/                   # ECS/Fargate対応BFF
+│   │   ├── src/               # Spring Boot Application
+│   │   ├── Dockerfile         # コンテナイメージ
+│   │   └── pom.xml            # Spring Boot依存関係
 │   ├── backend-ecs/           # ECS対応Backend
 │   │   ├── src/               # 既存Backendコード
 │   │   ├── Dockerfile         # ECS用コンテナ
@@ -86,9 +86,9 @@ bff-study/
 
 ### 主要CDK Construct例
 ```typescript
-// BFF Lambda Stack
-export class BffStack extends Stack {
-  constructor(scope: Construct, id: string, props: BffStackProps) {
+// BFF ECS/Fargate Stack
+export class BffEcsStack extends Stack {
+  constructor(scope: Construct, id: string, props: BffEcsStackProps) {
     super(scope, id, props);
 
     // ElastiCache Redis (Session Store)
@@ -97,52 +97,48 @@ export class BffStack extends Stack {
       engine: 'redis'
     });
 
-    // BFF Lambda Function
-    const bffLambda = new lambda.Function(this, 'BffLambda', {
-      runtime: lambda.Runtime.JAVA_17,
-      handler: 'com.example.bff.StreamLambdaHandler::handleRequest',
-      code: lambda.Code.fromAsset('../services/bff-lambda/target/bff-lambda.jar'),
-      timeout: Duration.seconds(30),
-      memorySize: 1024,
-      environment: {
-        REDIS_ENDPOINT: sessionCache.attrRedisEndpointAddress,
-        KEYCLOAK_URL: props.keycloakUrl
-      }
+    // ECS Cluster
+    const cluster = new ecs.Cluster(this, 'BffCluster', {
+      vpc: props.vpc,
+      containerInsights: true
     });
 
-    // API Gateway
-    const api = new apigateway.RestApi(this, 'BffApi', {
-      restApiName: 'BFF API',
-      description: 'API Gateway for BFF Lambda'
+    // Application Load Balancer
+    const alb = new elbv2.ApplicationLoadBalancer(this, 'BffAlb', {
+      vpc: props.vpc,
+      internetFacing: true
     });
 
-    // Lambda Integration
-    const lambdaIntegration = new apigateway.LambdaIntegration(bffLambda);
-    api.root.addProxy({ defaultIntegration: lambdaIntegration });
+    // ECS Service with Fargate
+    const service = new ecs.FargateService(this, 'BffService', {
+      cluster,
+      taskDefinition: taskDefinition,
+      desiredCount: 2
+    });
   }
 }
 ```
 
 ## ⚠️ 重要な技術検証ポイント
 
-### 🎯 BFF Lambda化の課題と解決策
+### 🎯 BFF ECS/Fargate化の利点と実装
 
-#### 1. Spring Boot → Spring Cloud Function移行
-**課題**: 
-- 既存のSpring Boot WebアプリケーションをLambdaに対応
-- OAuth2設定の互換性
-- セッション管理の外部化
+#### 1. Spring Boot → ECS/Fargate移行
+**利点**: 
+- 既存のSpring Boot Webアプリケーションをそのまま活用
+- OAuth2設定の継続利用
+- セッション管理の外部化（ElastiCache Redis）
 
-**解決策**:
+**実装**:
 ```xml
-<!-- pom.xml更新 -->
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-function-adapter-aws</artifactId>
-</dependency>
+<!-- pom.xml追加 -->
 <dependency>
     <groupId>org.springframework.session</groupId>
     <artifactId>spring-session-data-redis</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
 </dependency>
 ```
 
@@ -162,12 +158,12 @@ public class RedisSessionConfig {
 }
 ```
 
-#### 3. コールドスタート対策
-**課題**: 初回リクエストの遅延
-**解決策**: 
-- Provisioned Concurrency
-- Native Image (GraalVM) 検討
-- 適切なメモリサイズ設定
+#### 3. コンテナ最適化
+**利点**: 一定のパフォーマンス
+**実装**: 
+- マルチステージDockerビルド
+- JVM最適化設定
+- ヘルスチェック機能
 
 #### 4. OAuth2/OIDC設定調整
 **課題**: KeyCloak連携の環境変数化
@@ -187,41 +183,48 @@ spring:
             issuer-uri: ${KEYCLOAK_URL}/realms/training-app
 ```
 
-## 📅 段階的移行戦略
+## 📅 実装済み状況と次ステップ
 
-### Phase 1: インフラ基盤構築
-- [ ] CDKプロジェクト初期化
-- [ ] NetworkStack (VPC、セキュリティグループ)
-- [ ] 基本的なCI/CD設定
+### ✅ 完了済み
+- [x] **ECS基盤実装**: `infrastructure/cdk/lib/bff-ecs-stack.ts` 完成
+- [x] **Redis セッション管理**: Spring Session設定完了
+- [x] **Dockerコンテナ化**: マルチステージビルド対応
+- [x] **ALB統合**: ロードバランサー・ターゲットグループ設定完了
+- [x] **NetworkStack活用**: 既存VPC・セキュリティグループ活用完了
 
-### Phase 2: 認証・バックエンド移行
-- [ ] AuthStack (KeyCloak App Runner)
-- [ ] BackendStack (ECS Fargate)
-- [ ] RDS Aurora設定
+### 🔄 次期実装戦略: **ECS/Fargate デプロイ方式**
 
-### Phase 3: BFF Lambda化 ⭐ **最重要**
-- [ ] Spring Cloud Function移行
-- [ ] ElastiCache Redis設定
-- [ ] セッション外部化実装
-- [ ] Lambda関数デプロイ
-- [ ] コールドスタート対策
+**基本方針**: 既存BFF (`bff/`) をコンテナ化してECS/Fargateにデプロイ
 
-### Phase 4: API Gateway設定
-- [ ] AWS API Gateway構築
-- [ ] JWT Authorizer設定
-- [ ] CORS、レート制限設定
-- [ ] 既存API Gateway機能移行
+#### Step 1: ECS基盤のAWSデプロイ
+- [x] BffEcsStackの作成・完了
+- [ ] ECRリポジトリへのイメージプッシュ
+- [ ] ECSサービスのデプロイ
+- [ ] ALB経由での基本動作確認
 
-### Phase 5: フロントエンド移行
-- [ ] Amplify設定
-- [ ] カスタムドメイン設定
-- [ ] CI/CD設定
+#### Step 2: ElastiCache統合
+- [x] Spring Session Redis設定完了
+- [ ] セッション管理のクラウド化テスト
+- [x] 接続設定の環境変数化完了
 
-### Phase 6: 全統合テスト
-- [ ] エンドツーエンドテスト
-- [ ] パフォーマンステスト
-- [ ] セキュリティテスト
-- [ ] 本番リリース
+#### Step 3: KeyCloak統合
+- [ ] モック認証 → KeyCloak OAuth2置換
+- [ ] JWT発行・検証フローの実装
+- [ ] 認証境界の確立
+
+#### Step 4: 本番機能の完全統合
+- [x] 既存BFFのProxyController活用
+- [ ] JWT → API Gateway転送機能の動作確認
+- [ ] エンドツーエンドテストの実行
+
+### 🎯 移行完了後の構成
+```
+Frontend (Amplify) ←→ BFF (ECS/Fargate) ←→ API Gateway (8082) ←→ Backend (ECS)
+                             ↑                    ↑
+                      ALB + ElastiCache Redis   JWT認証/プロキシ
+                             ↓
+                    KeyCloak (App Runner)
+```
 
 ## 🔐 セキュリティ考慮事項
 
@@ -242,24 +245,24 @@ spring:
 ## 💰 コスト最適化
 
 ### 予想コスト構造
-- **Lambda**: リクエスト課金（コスト効率良）
-- **ECS Fargate**: 継続稼働（予測可能）
+- **ECS Fargate**: 継続稼働（予測可能・2タスク常時）
+- **ALB**: 時間課金＋データ処理課金
 - **ElastiCache**: 小規模Redis（t3.micro）
 - **App Runner**: オートスケール（利用量ベース）
-- **API Gateway**: リクエスト課金
+- **ECR**: ストレージ課金（最小限）
 
 ### 最適化ポイント
-- Lambda Provisioned Concurrency は必要時のみ
-- ECS Task サイズの最適化
+- ECS Auto Scaling設定（CPU/メモリベース）
+- ALBターゲットグループのヘルスチェック最適化
 - RDS Aurora Serverless v2 検討
 
 ## 🚦 成功指標
 
 ### 技術指標
-- [ ] コールドスタート時間 < 3秒
+- [ ] コンテナ起動時間 < 60秒
 - [ ] 通常レスポンス時間 < 500ms
 - [ ] セッション外部化の正常動作
-- [ ] JWT認証フローの完全移行
+- [ ] JWT認証フローの完全動作
 
 ### 運用指標
 - [ ] 99.9% 可用性
@@ -276,6 +279,7 @@ spring:
 
 ---
 
-**最終更新**: 2025-08-03  
+**最終更新**: 2025-08-13  
 **責任者**: Development Team  
+**移行方式**: Lambda → ECS/Fargate  
 **レビュー周期**: 週次更新
